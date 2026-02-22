@@ -1,0 +1,10 @@
+{
+    "name": "The Daily Developer",
+    "short_name": "DailyDev",
+    "description": "A newspaper-themed developer portfolio showcasing modern web development expertise.",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#f4f1ea",
+    "theme_color": "#f4f1ea",
+    "icons": []
+}
