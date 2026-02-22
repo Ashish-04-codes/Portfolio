@@ -61,7 +61,7 @@ const AdminConfig: React.FC = () => {
   // Listen for storage changes from other tabs (soft refresh)
   useEffect(() => {
     const handleStorageChange = () => {
-      siteConfigService.get().then(config => {
+      siteConfigService.get().then((config) => {
         if (config) {
           setFormData(config);
         }
@@ -129,9 +129,7 @@ const AdminConfig: React.FC = () => {
           <h2 className="font-sans font-black text-3xl uppercase tracking-tight">
             Site Configuration
           </h2>
-          <p className="font-mono text-sm text-ink/60 mt-1">
-            Global settings and preferences
-          </p>
+          <p className="font-mono text-sm text-ink/60 mt-1">Global settings and preferences</p>
         </div>
       </div>
 
@@ -142,9 +140,7 @@ const AdminConfig: React.FC = () => {
             <Input
               label="Site Title"
               value={formData.siteTitle}
-              onChange={(e) =>
-                setFormData({ ...formData, siteTitle: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, siteTitle: e.target.value })}
               required
               placeholder="The Daily Developer"
             />
@@ -152,18 +148,14 @@ const AdminConfig: React.FC = () => {
             <Input
               label="Tagline"
               value={formData.tagline}
-              onChange={(e) =>
-                setFormData({ ...formData, tagline: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, tagline: e.target.value })}
               placeholder="Code. Create. Learn."
             />
 
             <Textarea
               label="Site Description"
               value={formData.description}
-              onChange={(e) =>
-                setFormData({ ...formData, description: e.target.value })
-              }
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
               rows={3}
               placeholder="Brief description of your site"
             />
@@ -340,13 +332,7 @@ const AdminConfig: React.FC = () => {
 
         {/* Save Button */}
         <div className="flex gap-3 justify-end sticky bottom-4">
-          <Button
-            type="submit"
-            variant="primary"
-            disabled={saving}
-            size="lg"
-            className="shadow-lg"
-          >
+          <Button type="submit" variant="primary" disabled={saving} size="lg" className="shadow-lg">
             {saving ? (
               <>
                 <LoadingSpinner size="sm" />

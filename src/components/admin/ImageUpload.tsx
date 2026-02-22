@@ -15,12 +15,12 @@ interface ImageUploadProps {
   required?: boolean;
 }
 
-export const ImageUpload: React.FC<ImageUploadProps> = ({ 
-  label, 
-  value, 
+export const ImageUpload: React.FC<ImageUploadProps> = ({
+  label,
+  value,
   onChange,
   helperText,
-  required = false
+  required = false,
 }) => {
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState('');
@@ -72,11 +72,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         {/* Image Preview */}
         {value && (
           <div className="relative border-2 border-ink p-2 bg-surface">
-            <img 
-              src={value} 
-              alt="Preview" 
-              className="w-full h-48 object-cover"
-            />
+            <img src={value} alt="Preview" className="w-full h-48 object-cover" />
             <button
               type="button"
               onClick={handleRemove}
@@ -85,9 +81,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
             >
               <X size={16} />
             </button>
-            <p className="mt-2 font-mono text-xs text-ink/60 break-all">
-              {value}
-            </p>
+            <p className="mt-2 font-mono text-xs text-ink/60 break-all">{value}</p>
           </div>
         )}
 
@@ -106,9 +100,7 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
                 {uploading ? (
                   <>
                     <Loader size={32} className="animate-spin text-ink/60" />
-                    <span className="font-mono text-sm uppercase tracking-wide">
-                      Uploading...
-                    </span>
+                    <span className="font-mono text-sm uppercase tracking-wide">Uploading...</span>
                   </>
                 ) : (
                   <>
@@ -142,14 +134,10 @@ export const ImageUpload: React.FC<ImageUploadProps> = ({
         )}
 
         {/* Error Message */}
-        {error && (
-          <p className="mt-1 text-sm text-red-600 font-mono">{error}</p>
-        )}
+        {error && <p className="mt-1 text-sm text-red-600 font-mono">{error}</p>}
 
         {/* Helper Text */}
-        {helperText && !error && (
-          <p className="mt-1 text-sm text-ink/60 font-mono">{helperText}</p>
-        )}
+        {helperText && !error && <p className="mt-1 text-sm text-ink/60 font-mono">{helperText}</p>}
       </div>
     </div>
   );

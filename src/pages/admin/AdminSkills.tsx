@@ -41,12 +41,7 @@ const CATEGORIES = [
   'Other',
 ];
 
-const PROFICIENCY_LEVELS: ProficiencyLevel[] = [
-  'Beginner',
-  'Intermediate',
-  'Advanced',
-  'Expert',
-];
+const PROFICIENCY_LEVELS: ProficiencyLevel[] = ['Beginner', 'Intermediate', 'Advanced', 'Expert'];
 
 const AdminSkills: React.FC = () => {
   const navigate = useAppNavigate();
@@ -79,7 +74,7 @@ const AdminSkills: React.FC = () => {
   // Listen for storage changes (soft refresh - no loading spinner)
   useEffect(() => {
     const handleStorageChange = () => {
-      skillService.getAll().then(loadedSkills => {
+      skillService.getAll().then((loadedSkills) => {
         setSkills(loadedSkills);
       });
     };
@@ -247,11 +242,7 @@ const AdminSkills: React.FC = () => {
       render: (skill: Skill) => (
         <div className="flex items-center gap-3">
           {skill.icon && (
-            <img
-              src={skill.icon}
-              alt={skill.name}
-              className="w-8 h-8 object-contain"
-            />
+            <img src={skill.icon} alt={skill.name} className="w-8 h-8 object-contain" />
           )}
           <div>
             <div className="font-mono font-bold">{skill.name}</div>
@@ -279,7 +270,9 @@ const AdminSkills: React.FC = () => {
       header: 'Experience',
       render: (skill: Skill) => (
         <span className="font-mono text-sm">
-          {skill.yearsOfExperience && skill.yearsOfExperience > 0 ? `${skill.yearsOfExperience} years` : 'N/A'}
+          {skill.yearsOfExperience && skill.yearsOfExperience > 0
+            ? `${skill.yearsOfExperience} years`
+            : 'N/A'}
         </span>
       ),
     },
@@ -324,9 +317,7 @@ const AdminSkills: React.FC = () => {
 
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-sans font-black text-3xl uppercase tracking-tight">
-            Skills Manager
-          </h2>
+          <h2 className="font-sans font-black text-3xl uppercase tracking-tight">Skills Manager</h2>
           <p className="font-mono text-sm text-ink/60 mt-1">
             {skills.length} skill{skills.length !== 1 ? 's' : ''} total
           </p>
@@ -347,9 +338,7 @@ const AdminSkills: React.FC = () => {
         <Card
           title="No Skills Found"
           subtitle={
-            searchQuery
-              ? 'Try adjusting your search'
-              : 'Add your first skill to get started'
+            searchQuery ? 'Try adjusting your search' : 'Add your first skill to get started'
           }
         >
           <div className="text-center py-8">
@@ -381,9 +370,7 @@ const AdminSkills: React.FC = () => {
           <Select
             label="Category"
             value={formData.category}
-            onChange={(e) =>
-              setFormData({ ...formData, category: e.target.value })
-            }
+            onChange={(e) => setFormData({ ...formData, category: e.target.value })}
             required
           >
             {CATEGORIES.map((cat) => (
@@ -447,9 +434,7 @@ const AdminSkills: React.FC = () => {
             type="number"
             min="0"
             value={formData.order}
-            onChange={(e) =>
-              setFormData({ ...formData, order: parseInt(e.target.value) || 0 })
-            }
+            onChange={(e) => setFormData({ ...formData, order: parseInt(e.target.value) || 0 })}
             placeholder="0"
             helperText="Lower numbers appear first"
           />

@@ -30,7 +30,7 @@ class SkillService {
    */
   async getFeatured(): Promise<Skill[]> {
     const skills = await this.getAll();
-    return skills.filter(s => s.featured === true);
+    return skills.filter((s) => s.featured === true);
   }
 
   /**
@@ -38,7 +38,7 @@ class SkillService {
    */
   async getByCategory(category: string): Promise<Skill[]> {
     const skills = await this.getAll();
-    return skills.filter(s => s.category === category);
+    return skills.filter((s) => s.category === category);
   }
 
   /**
@@ -92,7 +92,7 @@ class SkillService {
   async reorder(skillIds: string[]): Promise<void> {
     const skills = await this.getAll();
     const updates = skillIds.map(async (id, index) => {
-      const skill = skills.find(s => s.id === id);
+      const skill = skills.find((s) => s.id === id);
       if (skill) {
         skill.order = index;
         skill.updatedAt = new Date().toISOString();

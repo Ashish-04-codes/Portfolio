@@ -26,47 +26,50 @@ const AdminSkills = lazy(() => import('./pages/admin/AdminSkills'));
 const AdminConfig = lazy(() => import('./pages/admin/AdminConfig'));
 
 const AppRouter: React.FC = () => {
-    return (
-        <Suspense fallback={<PageSkeleton />}>
-            <Routes>
-                {/* --- Public routes (wrapped in MainLayout) --- */}
-                <Route element={<PublicLayout />}>
-                    <Route index element={<FrontPage />} />
-                    <Route path="about" element={<AboutPage />} />
-                    <Route path="classifieds" element={<ClassifiedsPage />} />
-                    <Route path="editorial" element={<EditorialPage />} />
-                    <Route path="contact" element={<ContactPage />} />
-                    <Route path="*" element={<NotFoundPage />} />
-                </Route>
+  return (
+    <Suspense fallback={<PageSkeleton />}>
+      <Routes>
+        {/* --- Public routes (wrapped in MainLayout) --- */}
+        <Route element={<PublicLayout />}>
+          <Route index element={<FrontPage />} />
+          <Route path="about" element={<AboutPage />} />
+          <Route path="classifieds" element={<ClassifiedsPage />} />
+          <Route path="editorial" element={<EditorialPage />} />
+          <Route path="contact" element={<ContactPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Route>
 
-                {/* --- Login (no layout wrapper) --- */}
-                <Route path="login" element={
-                    <Suspense fallback={<PageSkeleton />}>
-                        <LoginPage />
-                    </Suspense>
-                } />
+        {/* --- Login (no layout wrapper) --- */}
+        <Route
+          path="login"
+          element={
+            <Suspense fallback={<PageSkeleton />}>
+              <LoginPage />
+            </Suspense>
+          }
+        />
 
-                {/* --- Admin routes (protected + AdminLayout) --- */}
-                <Route path="admin" element={<ProtectedRoute />}>
-                    <Route element={<AdminLayoutWrapper />}>
-                        <Route index element={<AdminDashboard />} />
-                        <Route path="projects" element={<AdminProjects />} />
-                        <Route path="blog" element={<AdminBlog />} />
-                        <Route path="profile" element={<AdminProfile />} />
-                        <Route path="skills" element={<AdminSkills />} />
-                        <Route path="config" element={<AdminConfig />} />
-                    </Route>
-                </Route>
+        {/* --- Admin routes (protected + AdminLayout) --- */}
+        <Route path="admin" element={<ProtectedRoute />}>
+          <Route element={<AdminLayoutWrapper />}>
+            <Route index element={<AdminDashboard />} />
+            <Route path="projects" element={<AdminProjects />} />
+            <Route path="blog" element={<AdminBlog />} />
+            <Route path="profile" element={<AdminProfile />} />
+            <Route path="skills" element={<AdminSkills />} />
+            <Route path="config" element={<AdminConfig />} />
+          </Route>
+        </Route>
 
-                {/* --- Redirects from old flat admin paths --- */}
-                <Route path="admin-projects" element={<Navigate to="/admin/projects" replace />} />
-                <Route path="admin-blog" element={<Navigate to="/admin/blog" replace />} />
-                <Route path="admin-profile" element={<Navigate to="/admin/profile" replace />} />
-                <Route path="admin-skills" element={<Navigate to="/admin/skills" replace />} />
-                <Route path="admin-config" element={<Navigate to="/admin/config" replace />} />
-            </Routes>
-        </Suspense>
-    );
+        {/* --- Redirects from old flat admin paths --- */}
+        <Route path="admin-projects" element={<Navigate to="/admin/projects" replace />} />
+        <Route path="admin-blog" element={<Navigate to="/admin/blog" replace />} />
+        <Route path="admin-profile" element={<Navigate to="/admin/profile" replace />} />
+        <Route path="admin-skills" element={<Navigate to="/admin/skills" replace />} />
+        <Route path="admin-config" element={<Navigate to="/admin/config" replace />} />
+      </Routes>
+    </Suspense>
+  );
 };
 
 export default AppRouter;

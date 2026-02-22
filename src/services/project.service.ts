@@ -30,7 +30,7 @@ class ProjectService {
    */
   async getPublished(): Promise<Project[]> {
     const projects = await this.getAll();
-    return projects.filter(p => p.published !== false);
+    return projects.filter((p) => p.published !== false);
   }
 
   /**
@@ -38,7 +38,7 @@ class ProjectService {
    */
   async getFeatured(): Promise<Project[]> {
     const projects = await this.getPublished();
-    return projects.filter(p => p.featured === true);
+    return projects.filter((p) => p.featured === true);
   }
 
   /**
@@ -93,7 +93,7 @@ class ProjectService {
   async reorder(projectIds: string[]): Promise<void> {
     const projects = await this.getAll();
     const updates = projectIds.map(async (id, index) => {
-      const project = projects.find(p => p.id === id);
+      const project = projects.find((p) => p.id === id);
       if (project) {
         project.order = index;
         project.updatedAt = new Date().toISOString();

@@ -11,7 +11,7 @@ import {
   Textarea,
   Select,
   ImageUpload,
-  Breadcrumb
+  Breadcrumb,
 } from '../../components/admin';
 import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
 import { useAppNavigate } from '../../hooks/useAppNavigate';
@@ -53,7 +53,7 @@ const AdminProjects: React.FC = () => {
   // Listen for storage changes (soft refresh - no loading spinner)
   useEffect(() => {
     const handleStorageChange = () => {
-      projectService.getAll().then(data => {
+      projectService.getAll().then((data) => {
         setProjects(data);
       });
     };
@@ -101,7 +101,7 @@ const AdminProjects: React.FC = () => {
   };
 
   const handleChange = (field: string, value: any) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -174,7 +174,9 @@ const AdminProjects: React.FC = () => {
       render: (project: Project) => (
         <div>
           <div className="font-bold">{project.title}</div>
-          <div className="text-xs text-ink/60">{project.category} • {project.year}</div>
+          <div className="text-xs text-ink/60">
+            {project.category} • {project.year}
+          </div>
         </div>
       ),
     },
@@ -183,9 +185,7 @@ const AdminProjects: React.FC = () => {
       header: 'Layout',
       width: '120px',
       render: (project: Project) => (
-        <span className="font-mono text-xs uppercase bg-surface px-2 py-1">
-          {project.layout}
-        </span>
+        <span className="font-mono text-xs uppercase bg-surface px-2 py-1">{project.layout}</span>
       ),
     },
     {
@@ -193,7 +193,9 @@ const AdminProjects: React.FC = () => {
       header: 'Status',
       width: '100px',
       render: (project: Project) => (
-        <span className={`font-mono text-xs uppercase ${project.published ? 'text-green-600' : 'text-red-600'}`}>
+        <span
+          className={`font-mono text-xs uppercase ${project.published ? 'text-green-600' : 'text-red-600'}`}
+        >
           {project.published ? 'Published' : 'Draft'}
         </span>
       ),
@@ -239,9 +241,7 @@ const AdminProjects: React.FC = () => {
           <h2 className="font-sans font-black text-3xl uppercase tracking-tight">
             Projects Manager
           </h2>
-          <p className="font-mono text-sm text-ink/60 mt-1">
-            {projects.length} total projects
-          </p>
+          <p className="font-mono text-sm text-ink/60 mt-1">{projects.length} total projects</p>
         </div>
         <Button onClick={() => handleOpenModal()}>
           <Plus size={16} className="inline mr-2" />
@@ -325,7 +325,12 @@ const AdminProjects: React.FC = () => {
           <Input
             label="Tech Stack (comma-separated)"
             value={formData.techStack?.join(', ')}
-            onChange={(e) => handleChange('techStack', e.target.value.split(',').map(s => s.trim()))}
+            onChange={(e) =>
+              handleChange(
+                'techStack',
+                e.target.value.split(',').map((s) => s.trim())
+              )
+            }
             placeholder="React, TypeScript, Node.js"
           />
 

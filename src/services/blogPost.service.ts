@@ -15,8 +15,8 @@ class BlogPostService {
    */
   async getAll(): Promise<BlogPost[]> {
     const posts = await getCollection<BlogPost>(COLLECTION);
-    return posts.sort((a, b) =>
-      new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime()
+    return posts.sort(
+      (a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime()
     );
   }
 
@@ -32,7 +32,7 @@ class BlogPostService {
    */
   async getPublished(): Promise<BlogPost[]> {
     const posts = await this.getAll();
-    return posts.filter(p => p.published !== false);
+    return posts.filter((p) => p.published !== false);
   }
 
   /**
@@ -40,7 +40,7 @@ class BlogPostService {
    */
   async getFeatured(): Promise<BlogPost[]> {
     const posts = await this.getPublished();
-    return posts.filter(p => p.featured === true);
+    return posts.filter((p) => p.featured === true);
   }
 
   /**

@@ -5,17 +5,17 @@ import { useState, useEffect } from 'react';
  * @returns {string} Formatted date string
  */
 export const useFormattedDate = () => {
-    const [currentDate, setCurrentDate] = useState<string>('');
+  const [currentDate, setCurrentDate] = useState<string>('');
 
-    useEffect(() => {
-        const options: Intl.DateTimeFormatOptions = {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric'
-        };
-        setCurrentDate(new Date().toLocaleDateString('en-US', options));
-    }, []);
+  useEffect(() => {
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+    };
+    setCurrentDate(new Date().toLocaleDateString('en-US', options));
+  }, []);
 
-    return currentDate;
+  return currentDate;
 };

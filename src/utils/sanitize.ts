@@ -8,22 +8,22 @@
  * Removes script tags and dangerous attributes
  */
 export const sanitizeHtml = (html: string): string => {
-    if (!html) return '';
+  if (!html) return '';
 
-    // Remove script tags and their content
-    let cleaned = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+  // Remove script tags and their content
+  let cleaned = html.replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
 
-    // Remove dangerous event handlers
-    cleaned = cleaned.replace(/on\w+\s*=\s*["'][^"']*["']/gi, '');
-    cleaned = cleaned.replace(/on\w+\s*=\s*[^\s>]*/gi, '');
+  // Remove dangerous event handlers
+  cleaned = cleaned.replace(/on\w+\s*=\s*["'][^"']*["']/gi, '');
+  cleaned = cleaned.replace(/on\w+\s*=\s*[^\s>]*/gi, '');
 
-    // Remove javascript: protocol
-    cleaned = cleaned.replace(/javascript:/gi, '');
+  // Remove javascript: protocol
+  cleaned = cleaned.replace(/javascript:/gi, '');
 
-    // Remove data: protocol (can be used for XSS)
-    cleaned = cleaned.replace(/data:text\/html/gi, '');
+  // Remove data: protocol (can be used for XSS)
+  cleaned = cleaned.replace(/data:text\/html/gi, '');
 
-    return cleaned.trim();
+  return cleaned.trim();
 };
 
 /**
@@ -31,32 +31,32 @@ export const sanitizeHtml = (html: string): string => {
  * Escapes HTML characters
  */
 export const sanitizeText = (text: string): string => {
-    if (!text) return '';
+  if (!text) return '';
 
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+  const div = document.createElement('div');
+  div.textContent = text;
+  return div.innerHTML;
 };
 
 /**
  * Sanitize URL to prevent javascript: protocol attacks
  */
 export const sanitizeUrl = (url: string): string => {
-    if (!url) return '';
+  if (!url) return '';
 
-    const trimmed = url.trim();
+  const trimmed = url.trim();
 
-    // Block dangerous protocols
-    const dangerousProtocols = ['javascript:', 'data:', 'vbscript:', 'file:'];
-    const lowerUrl = trimmed.toLowerCase();
+  // Block dangerous protocols
+  const dangerousProtocols = ['javascript:', 'data:', 'vbscript:', 'file:'];
+  const lowerUrl = trimmed.toLowerCase();
 
-    for (const protocol of dangerousProtocols) {
-        if (lowerUrl.startsWith(protocol)) {
-            return '';
-        }
+  for (const protocol of dangerousProtocols) {
+    if (lowerUrl.startsWith(protocol)) {
+      return '';
     }
+  }
 
-    return trimmed;
+  return trimmed;
 };
 
 /**
@@ -64,55 +64,55 @@ export const sanitizeUrl = (url: string): string => {
  * Removes special characters and spaces
  */
 export const sanitizeFilename = (filename: string): string => {
-    if (!filename) return '';
+  if (!filename) return '';
 
-    // Remove path traversal attempts
-    let cleaned = filename.replace(/\.\./g, '');
+  // Remove path traversal attempts
+  let cleaned = filename.replace(/\.\./g, '');
 
-    // Remove special characters except dot, dash, underscore
-    cleaned = cleaned.replace(/[^a-zA-Z0-9._-]/g, '_');
+  // Remove special characters except dot, dash, underscore
+  cleaned = cleaned.replace(/[^a-zA-Z0-9._-]/g, '_');
 
-    // Limit length
-    if (cleaned.length > 255) {
-        const ext = cleaned.split('.').pop();
-        cleaned = cleaned.substring(0, 250) + '.' + ext;
-    }
+  // Limit length
+  if (cleaned.length > 255) {
+    const ext = cleaned.split('.').pop();
+    cleaned = cleaned.substring(0, 250) + '.' + ext;
+  }
 
-    return cleaned;
+  return cleaned;
 };
 
 /**
  * Strip all HTML tags from string
  */
 export const stripHtml = (html: string): string => {
-    if (!html) return '';
+  if (!html) return '';
 
-    const div = document.createElement('div');
-    div.innerHTML = html;
-    return div.textContent || div.innerText || '';
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  return div.textContent || div.innerText || '';
 };
 
 /**
  * Truncate text to specified length
  */
 export const truncate = (text: string, maxLength: number): string => {
-    if (!text || text.length <= maxLength) return text;
+  if (!text || text.length <= maxLength) return text;
 
-    return text.substring(0, maxLength).trim() + '...';
+  return text.substring(0, maxLength).trim() + '...';
 };
 
 /**
  * Sanitize object by removing potentially dangerous properties
  */
 export const sanitizeObject = <T extends Record<string, any>>(obj: T): T => {
-    const dangerous = ['__proto__', 'constructor', 'prototype'];
-    const cleaned = { ...obj };
+  const dangerous = ['__proto__', 'constructor', 'prototype'];
+  const cleaned = { ...obj };
 
-    for (const key of dangerous) {
-        if (key in cleaned) {
-            delete cleaned[key];
-        }
+  for (const key of dangerous) {
+    if (key in cleaned) {
+      delete cleaned[key];
     }
+  }
 
-    return cleaned;
+  return cleaned;
 };

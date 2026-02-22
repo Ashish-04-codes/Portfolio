@@ -56,7 +56,11 @@ class ProfileService {
     } as Profile;
 
     await saveDocument(COLLECTION, DOC_ID, profile as unknown as Record<string, unknown>);
-    logger.debug('[ProfileService] Saved profile', { name: profile.name, title: profile.title, location: profile.location });
+    logger.debug('[ProfileService] Saved profile', {
+      name: profile.name,
+      title: profile.title,
+      location: profile.location,
+    });
     return profile;
   }
 

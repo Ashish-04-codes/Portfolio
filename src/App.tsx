@@ -5,18 +5,18 @@ import { ErrorBoundary } from './components/common';
 import { seedService } from './services';
 
 const App: React.FC = () => {
-    // Initialize database on first load
-    useEffect(() => {
-        seedService.seedDatabase();
-    }, []);
+  // Initialize database on first load
+  useEffect(() => {
+    seedService.seedDatabase();
+  }, []);
 
-    return (
-        <BrowserRouter>
-            <ErrorBoundary>
-                <AppRouter />
-            </ErrorBoundary>
-        </BrowserRouter>
-    );
+  return (
+    <BrowserRouter>
+      <ErrorBoundary>
+        <AppRouter />
+      </ErrorBoundary>
+    </BrowserRouter>
+  );
 };
 
 export default App;

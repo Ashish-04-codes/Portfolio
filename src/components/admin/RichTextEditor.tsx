@@ -73,9 +73,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   return (
     <div className="space-y-2">
       {label && (
-        <label className="block font-mono text-sm font-bold uppercase tracking-wide">
-          {label}
-        </label>
+        <label className="block font-mono text-sm font-bold uppercase tracking-wide">{label}</label>
       )}
 
       {/* Toolbar */}
@@ -84,7 +82,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <button
             key={index}
             type="button"
-            onClick={() => btn.onClick ? btn.onClick() : execCommand(btn.command, btn.value)}
+            onClick={() => (btn.onClick ? btn.onClick() : execCommand(btn.command, btn.value))}
             className="p-2 hover:bg-newsprint border border-transparent hover:border-ink transition-colors"
             title={btn.title}
           >
@@ -111,9 +109,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         }}
       />
 
-      {error && (
-        <p className="text-red-600 font-mono text-xs">{error}</p>
-      )}
+      {error && <p className="text-red-600 font-mono text-xs">{error}</p>}
 
       {/* Character Count */}
       <p className="font-mono text-xs text-ink/40 text-right">

@@ -57,7 +57,7 @@ const AdminBlog: React.FC = () => {
   // Listen for storage changes (soft refresh - no loading spinner)
   useEffect(() => {
     const handleStorageChange = () => {
-      blogPostService.getAll().then(posts => {
+      blogPostService.getAll().then((posts) => {
         setBlogPosts(posts);
       });
     };
@@ -215,7 +215,10 @@ const AdminBlog: React.FC = () => {
   };
 
   const handleTagsChange = (tagsString: string) => {
-    const tags = tagsString.split(',').map((t) => t.trim()).filter((t) => t);
+    const tags = tagsString
+      .split(',')
+      .map((t) => t.trim())
+      .filter((t) => t);
     setFormData({ ...formData, tags });
   };
 
@@ -261,8 +264,9 @@ const AdminBlog: React.FC = () => {
       header: 'Status',
       render: (post: BlogPost) => (
         <span
-          className={`px-2 py-1 font-mono text-xs uppercase ${post.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-            }`}
+          className={`px-2 py-1 font-mono text-xs uppercase ${
+            post.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+          }`}
         >
           {post.published ? 'Published' : 'Draft'}
         </span>
@@ -305,9 +309,7 @@ const AdminBlog: React.FC = () => {
 
       <div className="flex items-center justify-between gap-4">
         <div className="flex-1">
-          <h2 className="font-sans font-black text-3xl uppercase tracking-tight">
-            Blog Manager
-          </h2>
+          <h2 className="font-sans font-black text-3xl uppercase tracking-tight">Blog Manager</h2>
           <p className="font-mono text-sm text-ink/60 mt-1">
             {blogPosts.length} total posts • {blogPosts.filter((p) => p.published).length} published
           </p>
@@ -318,11 +320,7 @@ const AdminBlog: React.FC = () => {
         </Button>
       </div>
 
-      <SearchBar
-        value={searchQuery}
-        onChange={setSearchQuery}
-        placeholder="Search posts..."
-      />
+      <SearchBar value={searchQuery} onChange={setSearchQuery} placeholder="Search posts..." />
 
       <Table
         columns={columns}

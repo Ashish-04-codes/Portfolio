@@ -19,18 +19,16 @@ interface TableProps<T> {
   emptyMessage?: string;
 }
 
-export function Table<T>({ 
-  columns, 
-  data, 
+export function Table<T>({
+  columns,
+  data,
   keyExtractor,
-  emptyMessage = 'No data available'
+  emptyMessage = 'No data available',
 }: TableProps<T>) {
   if (data.length === 0) {
     return (
       <div className="border-2 border-ink p-8 text-center">
-        <p className="font-mono text-sm text-ink/60 uppercase tracking-wide">
-          {emptyMessage}
-        </p>
+        <p className="font-mono text-sm text-ink/60 uppercase tracking-wide">{emptyMessage}</p>
       </div>
     );
   }
@@ -40,7 +38,7 @@ export function Table<T>({
       <table className="w-full">
         <thead className="border-b-2 border-ink bg-surface">
           <tr>
-            {columns.map(column => (
+            {columns.map((column) => (
               <th
                 key={column.key}
                 style={{ width: column.width }}
@@ -52,17 +50,11 @@ export function Table<T>({
           </tr>
         </thead>
         <tbody className="divide-y divide-ink/20">
-          {data.map(item => (
-            <tr 
-              key={keyExtractor(item)}
-              className="hover:bg-surface transition-colors"
-            >
-              {columns.map(column => (
+          {data.map((item) => (
+            <tr key={keyExtractor(item)} className="hover:bg-surface transition-colors">
+              {columns.map((column) => (
                 <td key={column.key} className="px-4 py-3 font-body text-sm">
-                  {column.render 
-                    ? column.render(item) 
-                    : (item as any)[column.key]
-                  }
+                  {column.render ? column.render(item) : (item as any)[column.key]}
                 </td>
               ))}
             </tr>

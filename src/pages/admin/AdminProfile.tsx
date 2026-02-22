@@ -50,7 +50,7 @@ const AdminProfile: React.FC = () => {
   // Listen for storage changes (soft refresh - no loading spinner)
   useEffect(() => {
     const handleStorageChange = () => {
-      profileService.get().then(profile => {
+      profileService.get().then((profile) => {
         if (profile) {
           setFormData(profile);
         }
@@ -78,7 +78,11 @@ const AdminProfile: React.FC = () => {
     setSaving(true);
 
     try {
-      logger.debug('[AdminProfile] Saving profile', { name: formData.name, title: formData.title, location: formData.location });
+      logger.debug('[AdminProfile] Saving profile', {
+        name: formData.name,
+        title: formData.title,
+        location: formData.location,
+      });
       const savedProfile = await profileService.save(formData as any);
       // Directly update local state with saved data - no loading spinner
       setFormData(savedProfile);
@@ -133,12 +137,8 @@ const AdminProfile: React.FC = () => {
 
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-sans font-black text-3xl uppercase tracking-tight">
-            Profile Editor
-          </h2>
-          <p className="font-mono text-sm text-ink/60 mt-1">
-            Edit your personal information
-          </p>
+          <h2 className="font-sans font-black text-3xl uppercase tracking-tight">Profile Editor</h2>
+          <p className="font-mono text-sm text-ink/60 mt-1">Edit your personal information</p>
         </div>
       </div>
 
@@ -239,10 +239,7 @@ const AdminProfile: React.FC = () => {
         </Card>
 
         {/* About Sections */}
-        <Card
-          title="About Sections"
-          subtitle="Multiple sections for your About page"
-        >
+        <Card title="About Sections" subtitle="Multiple sections for your About page">
           <div className="space-y-4">
             {formData.sections?.map((section, index) => (
               <div key={index} className="p-4 border-2 border-ink/20 bg-surface space-y-3">
@@ -263,14 +260,18 @@ const AdminProfile: React.FC = () => {
                 <Input
                   label="Section Heading"
                   value={section.heading || ''}
-                  onChange={(e) => updateSection(index, 'heading' as keyof ProfileSection, e.target.value)}
+                  onChange={(e) =>
+                    updateSection(index, 'heading' as keyof ProfileSection, e.target.value)
+                  }
                   placeholder="e.g., On Approach"
                 />
 
                 <Input
                   label="Subheading"
                   value={section.subheading || ''}
-                  onChange={(e) => updateSection(index, 'subheading' as keyof ProfileSection, e.target.value)}
+                  onChange={(e) =>
+                    updateSection(index, 'subheading' as keyof ProfileSection, e.target.value)
+                  }
                   placeholder="e.g., Performance First"
                 />
 
@@ -334,13 +335,7 @@ const AdminProfile: React.FC = () => {
 
         {/* Save Button */}
         <div className="flex gap-3 justify-end sticky bottom-4">
-          <Button
-            type="submit"
-            variant="primary"
-            disabled={saving}
-            size="lg"
-            className="shadow-lg"
-          >
+          <Button type="submit" variant="primary" disabled={saving} size="lg" className="shadow-lg">
             {saving ? (
               <>
                 <LoadingSpinner size="sm" />

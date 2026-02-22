@@ -3,12 +3,12 @@
  * Defines the structure for portfolio projects
  */
 
-export type ProjectLayout = 
-  | 'featured' 
-  | 'standard' 
-  | 'inverted' 
-  | 'text-only' 
-  | 'sidebar-image' 
+export type ProjectLayout =
+  | 'featured'
+  | 'standard'
+  | 'inverted'
+  | 'text-only'
+  | 'sidebar-image'
   | 'placeholder';
 
 export interface ProjectLinks {

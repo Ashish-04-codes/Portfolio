@@ -16,13 +16,13 @@ interface ModalProps {
   showCloseButton?: boolean;
 }
 
-export const Modal: React.FC<ModalProps> = ({ 
-  isOpen, 
-  onClose, 
+export const Modal: React.FC<ModalProps> = ({
+  isOpen,
+  onClose,
   title,
   children,
   size = 'md',
-  showCloseButton = true
+  showCloseButton = true,
 }) => {
   useEffect(() => {
     if (isOpen) {
@@ -53,18 +53,18 @@ export const Modal: React.FC<ModalProps> = ({
   };
 
   return createPortal(
-    <div 
+    <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-ink/80 backdrop-blur-sm p-4"
       onClick={handleBackdropClick}
     >
-      <div className={`bg-newsprint border-4 border-ink shadow-2xl w-full ${sizeStyles[size]} max-h-[90vh] flex flex-col animate-in fade-in zoom-in duration-200`}>
+      <div
+        className={`bg-newsprint border-4 border-ink shadow-2xl w-full ${sizeStyles[size]} max-h-[90vh] flex flex-col animate-in fade-in zoom-in duration-200`}
+      >
         {/* Modal Header */}
         {(title || showCloseButton) && (
           <div className="border-b-2 border-ink p-4 flex items-center justify-between flex-shrink-0">
             {title && (
-              <h2 className="font-sans font-black text-2xl uppercase tracking-tight">
-                {title}
-              </h2>
+              <h2 className="font-sans font-black text-2xl uppercase tracking-tight">{title}</h2>
             )}
             {showCloseButton && (
               <button
@@ -79,9 +79,7 @@ export const Modal: React.FC<ModalProps> = ({
         )}
 
         {/* Modal Body */}
-        <div className="overflow-y-auto flex-1 p-6">
-          {children}
-        </div>
+        <div className="overflow-y-auto flex-1 p-6">{children}</div>
       </div>
     </div>,
     document.body

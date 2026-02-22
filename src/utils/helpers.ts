@@ -5,15 +5,15 @@
  * @returns Formatted date string
  */
 export const formatDate = (
-    date: Date = new Date(),
-    options: Intl.DateTimeFormatOptions = {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-    }
+  date: Date = new Date(),
+  options: Intl.DateTimeFormatOptions = {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  }
 ): string => {
-    return date.toLocaleDateString('en-US', options);
+  return date.toLocaleDateString('en-US', options);
 };
 
 /**
@@ -21,7 +21,7 @@ export const formatDate = (
  * @param behavior - Scroll behavior ('auto' | 'smooth' | 'instant')
  */
 export const scrollToTop = (behavior: ScrollBehavior = 'instant'): void => {
-    window.scrollTo({ top: 0, behavior });
+  window.scrollTo({ top: 0, behavior });
 };
 
 /**
@@ -30,5 +30,5 @@ export const scrollToTop = (behavior: ScrollBehavior = 'instant'): void => {
  * @returns Unique string ID
  */
 export const generateId = (): string => {
-    return crypto.randomUUID();
+  return crypto.randomUUID();
 };

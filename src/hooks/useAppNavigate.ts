@@ -10,14 +10,14 @@ import { Page } from '../types';
 import { pageToPath } from '../config/routes';
 
 export const useAppNavigate = () => {
-    const nav = useNavigate();
+  const nav = useNavigate();
 
-    const navigate = useCallback(
-        (page: Page | string) => {
-            nav(pageToPath(page as Page));
-        },
-        [nav]
-    );
+  const navigate = useCallback(
+    (page: Page | string) => {
+      nav(pageToPath(page as Page));
+    },
+    [nav]
+  );
 
-    return navigate;
+  return navigate;
 };

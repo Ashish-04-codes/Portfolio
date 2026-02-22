@@ -10,7 +10,7 @@ import {
   Plus,
   Activity,
   Clock,
-  Download
+  Download,
 } from 'lucide-react';
 import {
   projectService,
@@ -18,7 +18,7 @@ import {
   profileService,
   skillService,
   activityService,
-  authService
+  authService,
 } from '../../services';
 import type { ActivityLog } from '../../services/activity.service';
 import { useAppNavigate } from '../../hooks/useAppNavigate';
@@ -176,12 +176,8 @@ const AdminDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="font-sans font-black text-3xl uppercase tracking-tight">
-            Dashboard
-          </h2>
-          <p className="font-mono text-sm text-ink/60 mt-1">
-            Welcome back, {userEmail || 'Admin'}
-          </p>
+          <h2 className="font-sans font-black text-3xl uppercase tracking-tight">Dashboard</h2>
+          <p className="font-mono text-sm text-ink/60 mt-1">Welcome back, {userEmail || 'Admin'}</p>
         </div>
       </div>
 
@@ -197,9 +193,7 @@ const AdminDashboard: React.FC = () => {
               <div className={`${stat.color}`}>{stat.icon}</div>
               <span className="font-sans font-black text-3xl">{stat.count}</span>
             </div>
-            <p className="font-mono text-xs uppercase tracking-wider text-ink/60">
-              {stat.title}
-            </p>
+            <p className="font-mono text-xs uppercase tracking-wider text-ink/60">{stat.title}</p>
           </button>
         ))}
       </div>
@@ -247,10 +241,7 @@ const AdminDashboard: React.FC = () => {
       </Card>
 
       {/* Recent Activity */}
-      <Card
-        title="Recent Activity"
-        subtitle={`Last 7 days • ${recentActivity.length} actions`}
-      >
+      <Card title="Recent Activity" subtitle={`Last 7 days • ${recentActivity.length} actions`}>
         {recentActivity.length === 0 ? (
           <div className="text-center py-8 text-ink/40">
             <Activity size={48} className="mx-auto mb-3 opacity-20" />

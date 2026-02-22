@@ -46,9 +46,7 @@ const LoginPage: React.FC = () => {
           <h1 className="font-headline font-black text-5xl uppercase tracking-tighter mb-2">
             The Daily Developer
           </h1>
-          <p className="font-mono text-sm text-ink/60 uppercase tracking-widest">
-            Admin Login
-          </p>
+          <p className="font-mono text-sm text-ink/60 uppercase tracking-widest">Admin Login</p>
         </div>
 
         {/* Login Form */}
