@@ -16,7 +16,10 @@ import {
   LogOut,
   Menu,
   X,
+  Sun,
+  Moon,
 } from 'lucide-react';
+import { useTheme } from '../../hooks';
 
 interface SidebarProps {
   currentPage: Page;
@@ -41,6 +44,7 @@ const navItems: NavItem[] = [
 
 export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, onLogout }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const { isDarkMode, toggleTheme } = useTheme();
 
   const handleNavigate = (page: Page) => {
     onNavigate(page);
@@ -48,9 +52,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, onLog
   };
 
   const sidebarContent = (
-    <div className="flex flex-col h-full">
-      {/* Navigation Items */}
-      <nav className="flex-1 py-6">
+    <div className="flex flex-col h-[calc(100%-4rem)]">
+      {/* Navigation Items — scrollable */}
+      <nav className="flex-1 py-6 overflow-y-auto">
         <ul className="space-y-1">
           {navItems.map((item) => {
             const isActive = currentPage === item.page;
@@ -58,9 +62,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, onLog
               <li key={item.page}>
                 <button
                   onClick={() => handleNavigate(item.page)}
-                  className={`w-full flex items-center gap-3 px-6 py-3 font-mono text-sm transition-colors ${
-                    isActive ? 'bg-ink text-newsprint' : 'text-ink hover:bg-surface'
-                  }`}
+                  className={`w-full flex items-center gap-3 px-6 py-3 font-mono text-sm transition-colors ${isActive ? 'bg-ink text-newsprint' : 'text-ink hover:bg-surface'
+                    }`}
                 >
                   {item.icon}
                   <span>{item.label}</span>
@@ -73,6 +76,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, onLog
 
       {/* Bottom Actions */}
       <div className="border-t-2 border-ink">
+        <button
+          onClick={toggleTheme}
+          className="w-full flex items-center gap-3 px-6 py-3 font-mono text-sm text-ink hover:bg-surface transition-colors"
+        >
+          {isDarkMode ? <Sun size={20} /> : <Moon size={20} />}
+          <span>{isDarkMode ? 'Light Mode' : 'Dark Mode'}</span>
+        </button>
         <button
           onClick={() => {
             onNavigate('front');
@@ -126,9 +136,8 @@ export const Sidebar: React.FC<SidebarProps> = ({ currentPage, onNavigate, onLog
 
       {/* Sidebar - Mobile */}
       <aside
-        className={`lg:hidden fixed left-0 top-0 h-full w-64 bg-newsprint border-r-4 border-ink z-50 transform transition-transform duration-300 ${
-          mobileOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`lg:hidden fixed left-0 top-0 h-full w-64 bg-newsprint border-r-4 border-ink z-50 transform transition-transform duration-300 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
       >
         <div className="h-16 flex items-center justify-center border-b-4 border-ink">
           <h1 className="font-sans font-black text-xl uppercase tracking-tight">Admin Panel</h1>

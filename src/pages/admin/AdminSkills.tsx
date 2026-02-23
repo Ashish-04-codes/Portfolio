@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { Skill } from '../../models';
 import { skillService, activityService, authService } from '../../services';
+import { useAdminData } from '../../context/AdminDataContext';
 import {
   Card,
   Button,
@@ -46,9 +47,8 @@ const PROFICIENCY_LEVELS: ProficiencyLevel[] = ['Beginner', 'Intermediate', 'Adv
 const AdminSkills: React.FC = () => {
   const navigate = useAppNavigate();
   const toast = useOutletContext<ToastActions>();
-  const [skills, setSkills] = useState<Skill[]>([]);
+  const { skills, loading, refreshSkills } = useAdminData();
   const [filteredSkills, setFilteredSkills] = useState<Skill[]>([]);
-  const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingSkill, setEditingSkill] = useState<Skill | null>(null);
@@ -67,35 +67,11 @@ const AdminSkills: React.FC = () => {
     order: 0,
   });
 
-  useEffect(() => {
-    loadSkills();
-  }, []);
-
-  // Listen for storage changes (soft refresh - no loading spinner)
-  useEffect(() => {
-    const handleStorageChange = () => {
-      skillService.getAll().then((loadedSkills) => {
-        setSkills(loadedSkills);
-      });
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
+  // Data comes from AdminDataContext
 
   useEffect(() => {
     filterSkills();
   }, [searchQuery, skills]);
-
-  const loadSkills = async () => {
-    setLoading(true);
-    const loadedSkills = await skillService.getAll();
-    setSkills(loadedSkills);
-    setLoading(false);
-  };
 
   const filterSkills = () => {
     let filtered = [...skills];
@@ -176,9 +152,7 @@ const AdminSkills: React.FC = () => {
         toast.success('Skill added successfully!');
       }
 
-      // Directly refresh the list
-      const updatedSkills = await skillService.getAll();
-      setSkills(updatedSkills);
+      await refreshSkills();
       closeModal();
     } catch (error) {
       logger.error('Error saving skill', { error });
@@ -201,9 +175,7 @@ const AdminSkills: React.FC = () => {
           userEmail: authService.getUserEmail(),
         });
         toast.success('Skill deleted successfully!');
-        // Directly refresh the list
-        const updatedSkills = await skillService.getAll();
-        setSkills(updatedSkills);
+        await refreshSkills();
         setDeleteConfirm({ isOpen: false, skill: null });
       } catch (error) {
         logger.error('Error deleting skill', { error });

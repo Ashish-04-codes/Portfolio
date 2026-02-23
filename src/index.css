@@ -43,6 +43,23 @@ body {
 }
 
 /* ===========================
+   Global Form Dark Mode Fix
+   =========================== */
+
+input,
+textarea,
+select {
+  background-color: rgb(var(--rgb-surface));
+  color: rgb(var(--rgb-ink));
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+input[type="checkbox"],
+input[type="radio"] {
+  accent-color: rgb(var(--rgb-ink));
+}
+
+/* ===========================
    Newspaper Effects
    =========================== */
 
@@ -146,6 +163,7 @@ html:not(.dark-mode) .texture-overlay {
     transform: translateY(15px);
     filter: blur(2px);
   }
+
   100% {
     opacity: 1;
     transform: translateY(0);
@@ -177,18 +195,14 @@ html:not(.dark-mode) .texture-overlay {
 @keyframes enter {
   from {
     opacity: var(--tw-enter-opacity, 1);
-    transform: translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0)
-      scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1))
-      rotate(var(--tw-enter-rotate, 0));
+    transform: translate3d(var(--tw-enter-translate-x, 0), var(--tw-enter-translate-y, 0), 0) scale3d(var(--tw-enter-scale, 1), var(--tw-enter-scale, 1), var(--tw-enter-scale, 1)) rotate(var(--tw-enter-rotate, 0));
   }
 }
 
 @keyframes exit {
   to {
     opacity: var(--tw-exit-opacity, 1);
-    transform: translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0)
-      scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1))
-      rotate(var(--tw-exit-rotate, 0));
+    transform: translate3d(var(--tw-exit-translate-x, 0), var(--tw-exit-translate-y, 0), 0) scale3d(var(--tw-exit-scale, 1), var(--tw-exit-scale, 1), var(--tw-exit-scale, 1)) rotate(var(--tw-exit-rotate, 0));
   }
 }
 
@@ -250,12 +264,15 @@ html:not(.dark-mode) .texture-overlay {
   0% {
     transform: translateY(100%);
   }
+
   40% {
     transform: translateY(0%);
   }
+
   60% {
     transform: translateY(0%);
   }
+
   100% {
     transform: translateY(-100%);
   }
@@ -275,14 +292,17 @@ html:not(.dark-mode) .texture-overlay {
     opacity: 0;
     transform: translateY(20px);
   }
+
   40% {
     opacity: 1;
     transform: translateY(0);
   }
+
   60% {
     opacity: 1;
     transform: translateY(0);
   }
+
   100% {
     opacity: 0;
     transform: translateY(-20px);

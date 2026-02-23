@@ -36,6 +36,7 @@ export interface SiteConfig {
   author: string;
   location: string;
   logo?: string;
+  favicon?: string;
   email?: string;
   phone?: string;
   // Hero Section

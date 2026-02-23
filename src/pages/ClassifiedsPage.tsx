@@ -11,6 +11,8 @@ import {
   Github,
   Layers,
   Cpu,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { projectService } from '../services';
 import { Project } from '../models';
@@ -35,6 +37,11 @@ interface ProjectModalProps {
 
 const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
   const [isClosing, setIsClosing] = useState(false);
+  const allImages = [
+    ...(project.image ? [project.image] : []),
+    ...(project.images || []).filter((img) => img !== project.image),
+  ];
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -55,19 +62,17 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
       {/* Backdrop */}
       <div
-        className={`absolute inset-0 bg-ink/60 backdrop-blur-sm transition-all duration-300 ${
-          isClosing ? 'opacity-0' : 'animate-in fade-in'
-        }`}
+        className={`absolute inset-0 bg-ink/60 backdrop-blur-sm transition-all duration-300 ${isClosing ? 'opacity-0' : 'animate-in fade-in'
+          }`}
         onClick={handleClose}
       />
 
       {/* Modal Content - "The Case File" */}
       <div
-        className={`relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-newsprint border-4 border-double border-ink shadow-[10px_10px_0px_0px_rgba(0,0,0,0.5)] flex flex-col duration-300 ${
-          isClosing
+        className={`relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-newsprint border-4 border-double border-ink shadow-[10px_10px_0px_0px_rgba(0,0,0,0.5)] flex flex-col duration-300 ${isClosing
             ? 'animate-out fade-out slide-out-to-bottom-4'
             : 'animate-in fade-in slide-in-from-bottom-4'
-        }`}
+          }`}
       >
         {/* Paper Texture Overlay */}
         <div className="absolute inset-0 pointer-events-none opacity-50 bg-[url('/cream-paper.png')] mix-blend-multiply"></div>
@@ -111,19 +116,62 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
           <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
             {/* Left Column: Details */}
             <div className="md:col-span-8 space-y-8">
-              {/* Image */}
-              {project.image && (
-                <div className="w-full border-2 border-ink p-1 bg-surface shadow-md">
-                  <div className="halftone overflow-hidden h-64 md:h-80 w-full bg-newsprint-dark relative">
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="w-full h-full object-cover grayscale contrast-125 hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute bottom-2 right-2 bg-newsprint px-2 py-1 border border-ink text-[10px] font-mono uppercase">
-                      Fig A. Interface Design
+              {/* Image(s) */}
+              {allImages.length > 0 && (
+                <div className="space-y-3">
+                  {/* Main Active Image */}
+                  <div className="w-full border-2 border-ink p-1 bg-surface shadow-md relative">
+                    <div className="halftone overflow-hidden h-64 md:h-80 w-full bg-newsprint-dark relative">
+                      <img
+                        src={allImages[activeImageIndex]}
+                        alt={`${project.title} - Image ${activeImageIndex + 1}`}
+                        className="w-full h-full object-cover grayscale contrast-125 hover:scale-105 transition-transform duration-700"
+                      />
+                      <div className="absolute bottom-2 right-2 bg-newsprint px-2 py-1 border border-ink text-[10px] font-mono uppercase">
+                        Fig {String.fromCharCode(65 + activeImageIndex)}. {activeImageIndex === 0 ? 'Interface Design' : `Screenshot ${activeImageIndex + 1}`}
+                      </div>
                     </div>
+
+                    {/* Navigation Arrows */}
+                    {allImages.length > 1 && (
+                      <>
+                        <button
+                          onClick={() => setActiveImageIndex((prev) => (prev === 0 ? allImages.length - 1 : prev - 1))}
+                          className="absolute left-3 top-1/2 -translate-y-1/2 bg-ink/80 text-newsprint p-1.5 hover:bg-ink transition-colors"
+                        >
+                          <ChevronLeft size={18} />
+                        </button>
+                        <button
+                          onClick={() => setActiveImageIndex((prev) => (prev === allImages.length - 1 ? 0 : prev + 1))}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 bg-ink/80 text-newsprint p-1.5 hover:bg-ink transition-colors"
+                        >
+                          <ChevronRight size={18} />
+                        </button>
+                      </>
+                    )}
                   </div>
+
+                  {/* Thumbnail Strip */}
+                  {allImages.length > 1 && (
+                    <div className="flex gap-2 overflow-x-auto pb-1">
+                      {allImages.map((img, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setActiveImageIndex(idx)}
+                          className={`shrink-0 w-16 h-12 border-2 overflow-hidden transition-all ${idx === activeImageIndex
+                              ? 'border-ink shadow-[2px_2px_0_0_rgba(0,0,0,1)]'
+                              : 'border-ink/30 opacity-60 hover:opacity-100'
+                            }`}
+                        >
+                          <img src={img} alt={`Thumb ${idx + 1}`} className="w-full h-full object-cover grayscale" />
+                        </button>
+                      ))}
+                      <div className="font-mono text-[9px] uppercase self-center pl-2 text-ink/50 shrink-0">
+                        {activeImageIndex + 1} / {allImages.length}
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
 

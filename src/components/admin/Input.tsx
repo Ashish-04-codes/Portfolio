@@ -22,9 +22,8 @@ export const Input: React.FC<InputProps> = React.memo(
           </label>
         )}
         <input
-          className={`w-full px-4 py-2 border-2 border-ink font-body text-base focus:outline-none focus:ring-2 focus:ring-ink/20 ${
-            error ? 'border-red-600' : ''
-          } ${className}`}
+          className={`w-full px-4 py-2 border-2 border-ink bg-surface text-ink font-body text-base focus:outline-none focus:ring-2 focus:ring-ink/20 transition-colors ${error ? 'border-red-600' : ''
+            } ${className}`}
           {...props}
         />
         {error && <p className="mt-1 text-sm text-red-600 font-mono">{error}</p>}

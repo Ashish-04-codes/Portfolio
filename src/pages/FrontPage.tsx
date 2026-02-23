@@ -3,9 +3,11 @@ import { ArrowRight, Cloud, Sun, Terminal, Database, TrendingUp, TrendingDown } 
 import { profileService, skillService } from '../services';
 import { Profile, Skill } from '../models';
 import { useAppNavigate } from '../hooks/useAppNavigate';
+import { useSiteConfig } from '../context/SiteConfigContext';
 
 const FrontPage: React.FC = () => {
   const navigate = useAppNavigate();
+  const { heroTitle, heroSubtitle, heroImage, availableForWork, availabilityMessage } = useSiteConfig();
   const [profile, setProfile] = useState<Profile | null>(null);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [loading, setLoading] = useState(true);
@@ -150,7 +152,7 @@ const FrontPage: React.FC = () => {
         <div className="border-2 border-ink border-dashed p-6 text-center rotate-1 hover:rotate-0 transition-transform duration-300 bg-surface">
           <p className="font-mono text-[10px] uppercase mb-2">Notice</p>
           <p className="font-headline font-bold italic text-lg leading-tight">
-            "Available for Full-time Roles & Freelance Commissions"
+            "{availabilityMessage}"
           </p>
           <button
             onClick={() => navigate('contact')}
@@ -165,10 +167,10 @@ const FrontPage: React.FC = () => {
       <article className="col-span-full lg:col-span-6 border-r-0 lg:border-r border-ink p-8 md:p-12">
         <div className="text-center max-w-4xl mx-auto">
           <span className="inline-block border-b border-ink text-xs font-bold uppercase tracking-widest mb-3">
-            Portfolio Launched
+            {heroSubtitle}
           </span>
           <h2 className="font-headline font-black text-5xl md:text-7xl leading-[0.9] uppercase mb-4 tracking-tighter">
-            Full-Stack Engineer Redefines User Experience
+            {heroTitle}
           </h2>
           <div className="flex justify-center items-center gap-4 text-xs font-mono uppercase text-ink-light mb-6">
             <span>By {profile?.name || '[Your Name]'}</span>
@@ -182,7 +184,7 @@ const FrontPage: React.FC = () => {
         <figure className="mb-8 relative border border-ink p-1 bg-surface shadow-sm">
           <div className="halftone h-64 md:h-80 w-full overflow-hidden">
             <img
-              src="https://picsum.photos/800/600?grayscale"
+              src={heroImage || 'https://picsum.photos/800/600?grayscale'}
               alt="Developer Desk"
               className="w-full h-full object-cover grayscale contrast-125 brightness-90 hover:scale-105 transition-transform duration-700"
             />

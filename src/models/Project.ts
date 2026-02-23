@@ -25,6 +25,7 @@ export interface Project {
   shortDesc: string;
   fullDesc?: string;
   image?: string;
+  images?: string[];
   techStack?: string[];
   challenge?: string;
   solution?: string;
@@ -45,6 +46,7 @@ export interface CreateProjectDTO {
   shortDesc: string;
   fullDesc?: string;
   image?: string;
+  images?: string[];
   techStack?: string[];
   challenge?: string;
   solution?: string;

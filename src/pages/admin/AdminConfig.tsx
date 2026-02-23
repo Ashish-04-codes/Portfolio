@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { SiteConfig } from '../../models';
 import { siteConfigService, activityService, authService } from '../../services';
+import { useAdminData } from '../../context/AdminDataContext';
 import {
   Card,
   Button,
@@ -11,6 +12,7 @@ import {
   Breadcrumb,
   LoadingSpinner,
 } from '../../components/admin';
+import { FormSkeleton } from '../../components/admin/AdminSkeleton';
 import { Save, Settings } from 'lucide-react';
 import { useAppNavigate } from '../../hooks/useAppNavigate';
 import { logger } from '../../utils/logger';
@@ -25,13 +27,20 @@ interface ToastActions {
 const AdminConfig: React.FC = () => {
   const navigate = useAppNavigate();
   const toast = useOutletContext<ToastActions>();
-  const [loading, setLoading] = useState(true);
+  const { siteConfig: contextConfig, loading, refreshSiteConfig } = useAdminData();
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<Partial<SiteConfig>>({
     siteTitle: 'The Daily Developer',
     tagline: 'Code. Create. Learn.',
     description: '',
+    location: '',
     logo: '',
+    favicon: '',
+    heroTitle: '',
+    heroSubtitle: '',
+    heroImage: '',
+    availableForWork: true,
+    availabilityMessage: '',
     seo: {
       metaDescription: '',
       keywords: [],
@@ -54,35 +63,12 @@ const AdminConfig: React.FC = () => {
     },
   });
 
+  // Initialize form from context
   useEffect(() => {
-    loadConfig();
-  }, []);
-
-  // Listen for storage changes from other tabs (soft refresh)
-  useEffect(() => {
-    const handleStorageChange = () => {
-      siteConfigService.get().then((config) => {
-        if (config) {
-          setFormData(config);
-        }
-      });
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
-
-  const loadConfig = async () => {
-    setLoading(true);
-    const config = await siteConfigService.get();
-    if (config) {
-      setFormData(config);
+    if (contextConfig) {
+      setFormData(contextConfig);
     }
-    setLoading(false);
-  };
+  }, [contextConfig]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -90,8 +76,8 @@ const AdminConfig: React.FC = () => {
 
     try {
       const savedConfig = await siteConfigService.update(formData as any);
-      // Directly update local state with saved data
       setFormData(savedConfig);
+      await refreshSiteConfig();
       activityService.log({
         action: 'update',
         entityType: 'config',
@@ -117,7 +103,12 @@ const AdminConfig: React.FC = () => {
   };
 
   if (loading) {
-    return <LoadingSpinner centered message="Loading configuration..." />;
+    return (
+      <div className="space-y-6">
+        <Breadcrumb currentPage="admin-config" onNavigate={navigate} />
+        <FormSkeleton />
+      </div>
+    );
   }
 
   return (
@@ -152,6 +143,13 @@ const AdminConfig: React.FC = () => {
               placeholder="Code. Create. Learn."
             />
 
+            <Input
+              label="Location"
+              value={formData.location}
+              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+              placeholder="San Francisco, CA"
+            />
+
             <Textarea
               label="Site Description"
               value={formData.description}
@@ -164,6 +162,65 @@ const AdminConfig: React.FC = () => {
               label="Site Logo"
               value={formData.logo || ''}
               onChange={(url) => setFormData({ ...formData, logo: url })}
+            />
+
+            <ImageUpload
+              label="Favicon (Browser Tab Icon)"
+              value={formData.favicon || ''}
+              onChange={(url) => setFormData({ ...formData, favicon: url })}
+              helperText="Square image recommended (32x32px or 64x64px). PNG or SVG."
+            />
+          </div>
+        </Card>
+
+        {/* Hero Section */}
+        <Card title="Hero Section" subtitle="Homepage hero area content">
+          <div className="space-y-4">
+            <Input
+              label="Hero Title"
+              value={formData.heroTitle || ''}
+              onChange={(e) => setFormData({ ...formData, heroTitle: e.target.value })}
+              placeholder="Full-Stack Engineer Redefines User Experience"
+            />
+
+            <Input
+              label="Hero Subtitle"
+              value={formData.heroSubtitle || ''}
+              onChange={(e) => setFormData({ ...formData, heroSubtitle: e.target.value })}
+              placeholder="Portfolio Launched"
+            />
+
+            <ImageUpload
+              label="Hero Image"
+              value={formData.heroImage || ''}
+              onChange={(url) => setFormData({ ...formData, heroImage: url })}
+              helperText="Main image on the homepage (800x600px recommended)"
+            />
+          </div>
+        </Card>
+
+        {/* Availability */}
+        <Card title="Availability" subtitle="Show your work availability status">
+          <div className="space-y-4">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={formData.availableForWork ?? true}
+                onChange={(e) =>
+                  setFormData({ ...formData, availableForWork: e.target.checked })
+                }
+                className="w-4 h-4 border-2 border-ink/20"
+              />
+              <span className="font-mono text-sm">Available for Work</span>
+            </label>
+
+            <Input
+              label="Availability Message"
+              value={formData.availabilityMessage || ''}
+              onChange={(e) =>
+                setFormData({ ...formData, availabilityMessage: e.target.value })
+              }
+              placeholder="Available for Full-time Roles & Freelance Commissions"
             />
           </div>
         </Card>

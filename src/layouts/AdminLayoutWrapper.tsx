@@ -13,6 +13,7 @@ import { authService } from '../services';
 import { pathToPage } from '../config/routes';
 import { Modal, Button } from '../components/admin';
 import { Clock } from 'lucide-react';
+import { AdminDataProvider } from '../context/AdminDataContext';
 
 export const AdminLayoutWrapper: React.FC = () => {
   const navigate = useAppNavigate();
@@ -44,7 +45,7 @@ export const AdminLayoutWrapper: React.FC = () => {
   const toastActions = { success, error, warning, info };
 
   return (
-    <>
+    <AdminDataProvider>
       <AdminLayout currentPage={currentPage} navigate={navigate} onLogout={handleLogout}>
         <Outlet context={toastActions} />
       </AdminLayout>
@@ -79,6 +80,7 @@ export const AdminLayoutWrapper: React.FC = () => {
 
       {/* Toast Notifications for Admin */}
       {toast.show && <Toast type={toast.type} message={toast.message} onClose={hideToast} />}
-    </>
+    </AdminDataProvider>
   );
 };
+

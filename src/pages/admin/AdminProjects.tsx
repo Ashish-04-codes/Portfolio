@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { Project, ProjectLayout } from '../../models';
 import { projectService } from '../../services';
+import { useAdminData } from '../../context/AdminDataContext';
 import {
   Card,
   Table,
@@ -11,6 +12,7 @@ import {
   Textarea,
   Select,
   ImageUpload,
+  MultiImageUpload,
   Breadcrumb,
 } from '../../components/admin';
 import { Plus, Edit, Trash2, Eye, EyeOff } from 'lucide-react';
@@ -27,7 +29,7 @@ interface ToastActions {
 const AdminProjects: React.FC = () => {
   const navigate = useAppNavigate();
   const toast = useOutletContext<ToastActions>();
-  const [projects, setProjects] = useState<Project[]>([]);
+  const { projects, refreshProjects } = useAdminData();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<Project | null>(null);
   const [formData, setFormData] = useState<Partial<Project>>({
@@ -38,6 +40,7 @@ const AdminProjects: React.FC = () => {
     shortDesc: '',
     fullDesc: '',
     image: '',
+    images: [],
     techStack: [],
     challenge: '',
     solution: '',
@@ -46,29 +49,7 @@ const AdminProjects: React.FC = () => {
     published: true,
   });
 
-  useEffect(() => {
-    loadProjects();
-  }, []);
-
-  // Listen for storage changes (soft refresh - no loading spinner)
-  useEffect(() => {
-    const handleStorageChange = () => {
-      projectService.getAll().then((data) => {
-        setProjects(data);
-      });
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
-
-  const loadProjects = async () => {
-    const data = await projectService.getAll();
-    setProjects(data);
-  };
+  // Data comes from AdminDataContext — no need for local loading
 
   const handleOpenModal = (project?: Project) => {
     if (project) {
@@ -84,6 +65,7 @@ const AdminProjects: React.FC = () => {
         shortDesc: '',
         fullDesc: '',
         image: '',
+        images: [],
         techStack: [],
         challenge: '',
         solution: '',
@@ -115,9 +97,7 @@ const AdminProjects: React.FC = () => {
         await projectService.create(formData as any);
         toast.success('Project created successfully!');
       }
-      // Directly refresh the list
-      const updatedProjects = await projectService.getAll();
-      setProjects(updatedProjects);
+      await refreshProjects();
       handleCloseModal();
     } catch (error) {
       logger.error('Error saving project', { error });
@@ -133,9 +113,7 @@ const AdminProjects: React.FC = () => {
     try {
       await projectService.delete(id);
       toast.success('Project deleted successfully!');
-      // Directly refresh the list
-      const updatedProjects = await projectService.getAll();
-      setProjects(updatedProjects);
+      await refreshProjects();
     } catch (error) {
       logger.error('Error deleting project', { error });
       toast.error('Failed to delete project.');
@@ -149,9 +127,7 @@ const AdminProjects: React.FC = () => {
         published: !project.published,
       });
       toast.success(project.published ? 'Project unpublished!' : 'Project published!');
-      // Directly refresh the list
-      const updatedProjects = await projectService.getAll();
-      setProjects(updatedProjects);
+      await refreshProjects();
     } catch (error) {
       logger.error('Error updating project', { error });
       toast.error('Failed to update project status.');
@@ -316,10 +292,24 @@ const AdminProjects: React.FC = () => {
           />
 
           <ImageUpload
-            label="Project Image"
+            label="Cover Image"
             value={formData.image}
             onChange={(url) => handleChange('image', url)}
-            helperText="Upload an image or paste a URL"
+            helperText="Main project thumbnail displayed in the project list"
+          />
+
+          <MultiImageUpload
+            label="Project Gallery"
+            images={formData.images || []}
+            onChange={(imgs) => {
+              handleChange('images', imgs);
+              // Auto-set first image as cover if no cover is set
+              if (imgs.length > 0 && !formData.image) {
+                handleChange('image', imgs[0]);
+              }
+            }}
+            helperText="Additional project screenshots and images (max 10)"
+            maxImages={10}
           />
 
           <Input

@@ -1,23 +1,26 @@
 /**
  * PublicLayout — wraps all public pages with Header, Navigation, Footer.
  * Uses React Router's <Outlet> for nested route rendering.
+ * Includes page transition animation when navigating between pages.
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import React, { useState, useCallback, useMemo, useRef } from 'react';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Header, Footer, PageTransitionOverlay } from '../components/common';
 import { useTheme, useFormattedDate } from '../hooks';
-import { useAppNavigate } from '../hooks/useAppNavigate';
-import { pathToPage } from '../config/routes';
-import { PAGE_HEADERS } from '../constants';
+import { pathToPage, pageToPath } from '../config/routes';
+import { PAGE_HEADERS, ANIMATION_TIMING } from '../constants';
+import { Page } from '../types';
 
 export const PublicLayout: React.FC = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [isTransitioning, setIsTransitioning] = useState(false);
   const { isDarkMode, toggleTheme } = useTheme();
   const currentDate = useFormattedDate();
-  const navigate = useAppNavigate();
+  const routerNavigate = useNavigate();
   const location = useLocation();
   const currentPage = pathToPage(location.pathname);
+  const pendingNavRef = useRef<string | null>(null);
 
   const getSubHeader = useMemo(() => {
     const header = PAGE_HEADERS[currentPage];
@@ -31,11 +34,33 @@ export const PublicLayout: React.FC = () => {
   }, [currentPage, currentDate]);
 
   const handleNavigate = useCallback(
-    (page: string) => {
+    (page: Page | string) => {
+      const targetPath = pageToPath(page as Page);
+      const currentPath = location.pathname;
+
+      // Don't transition if already on the same page
+      if (targetPath === currentPath) return;
+
       setMobileMenuOpen(false);
-      navigate(page);
+
+      // Trigger transition overlay
+      setIsTransitioning(true);
+      pendingNavRef.current = targetPath;
+
+      // Navigate after 600ms (40% of 1.2s animation — when overlay fully covers screen)
+      setTimeout(() => {
+        if (pendingNavRef.current) {
+          routerNavigate(pendingNavRef.current);
+          pendingNavRef.current = null;
+        }
+      }, ANIMATION_TIMING.pageTransitionDelay);
+
+      // Deactivate overlay after full animation completes
+      setTimeout(() => {
+        setIsTransitioning(false);
+      }, ANIMATION_TIMING.pageTransitionDuration);
     },
-    [navigate]
+    [location.pathname, routerNavigate]
   );
 
   const handleToggleMobileMenu = useCallback(() => {
@@ -53,7 +78,7 @@ export const PublicLayout: React.FC = () => {
       </a>
 
       {/* Page Transition Overlay */}
-      <PageTransitionOverlay isActive={false} />
+      <PageTransitionOverlay isActive={isTransitioning} />
 
       {/* Noise Overlay */}
       <div className="noise-overlay" />

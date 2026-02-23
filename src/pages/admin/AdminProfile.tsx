@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { Profile, ProfileSection } from '../../models';
 import { profileService, activityService, authService } from '../../services';
+import { useAdminData } from '../../context/AdminDataContext';
 import { generateId } from '../../utils/helpers';
 import {
   Card,
@@ -26,7 +27,7 @@ interface ToastActions {
 const AdminProfile: React.FC = () => {
   const navigate = useAppNavigate();
   const toast = useOutletContext<ToastActions>();
-  const [loading, setLoading] = useState(true);
+  const { profile: contextProfile, loading, refreshProfile } = useAdminData();
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<Partial<Profile>>({
     name: '',
@@ -43,35 +44,14 @@ const AdminProfile: React.FC = () => {
     website: '',
   });
 
+  // Initialize form from context profile
   useEffect(() => {
-    loadProfile();
-  }, []);
-
-  // Listen for storage changes (soft refresh - no loading spinner)
-  useEffect(() => {
-    const handleStorageChange = () => {
-      profileService.get().then((profile) => {
-        if (profile) {
-          setFormData(profile);
-        }
-      });
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
-
-  const loadProfile = async () => {
-    setLoading(true);
-    const profile = await profileService.get();
-    if (profile) {
-      setFormData(profile);
+    if (contextProfile) {
+      setFormData(contextProfile);
     }
-    setLoading(false);
-  };
+  }, [contextProfile]);
+
+  // Data comes from AdminDataContext
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -84,8 +64,8 @@ const AdminProfile: React.FC = () => {
         location: formData.location,
       });
       const savedProfile = await profileService.save(formData as any);
-      // Directly update local state with saved data - no loading spinner
       setFormData(savedProfile);
+      await refreshProfile();
       activityService.log({
         action: 'update',
         entityType: 'profile',

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { Card, Button, Breadcrumb } from '../../components/admin';
+import { DashboardSkeleton } from '../../components/admin/AdminSkeleton';
 import {
   FolderOpen,
   FileText,
@@ -12,16 +13,10 @@ import {
   Clock,
   Download,
 } from 'lucide-react';
-import {
-  projectService,
-  blogPostService,
-  profileService,
-  skillService,
-  activityService,
-  authService,
-} from '../../services';
+import { activityService, authService } from '../../services';
 import type { ActivityLog } from '../../services/activity.service';
 import { useAppNavigate } from '../../hooks/useAppNavigate';
+import { useAdminData } from '../../context/AdminDataContext';
 
 interface ToastActions {
   success: (message: string) => void;
@@ -30,34 +25,20 @@ interface ToastActions {
   info: (message: string) => void;
 }
 
-interface Stats {
-  projectsCount: number;
-  blogPostsCount: number;
-  skillsCount: number;
-  hasProfile: boolean;
-}
-
 const AdminDashboard: React.FC = () => {
   const navigate = useAppNavigate();
   const toast = useOutletContext<ToastActions>();
-  const [stats, setStats] = useState<Stats>({
-    projectsCount: 0,
-    blogPostsCount: 0,
-    skillsCount: 0,
-    hasProfile: false,
-  });
+  const { projects, blogPosts, skills, profile, loading } = useAdminData();
   const [recentActivity, setRecentActivity] = useState<ActivityLog[]>([]);
   const userEmail = authService.getUserEmail();
 
   useEffect(() => {
-    loadStats();
     loadActivity();
   }, []);
 
-  // Listen for data changes to refresh stats (soft refresh - no spinner)
+  // Listen for data changes to refresh activity
   useEffect(() => {
     const handleStorageChange = () => {
-      loadStats();
       loadActivity();
     };
 
@@ -75,27 +56,11 @@ const AdminDashboard: React.FC = () => {
     setRecentActivity(logs.slice(0, 10)); // Show last 10
   };
 
-  const loadStats = async () => {
-    const [projects, blogPosts, skills, profile] = await Promise.all([
-      projectService.getAll(),
-      blogPostService.getAll(),
-      skillService.getAll(),
-      profileService.get(),
-    ]);
-
-    setStats({
-      projectsCount: projects.length,
-      blogPostsCount: blogPosts.length,
-      skillsCount: skills.length,
-      hasProfile: !!profile,
-    });
-  };
-
   const statCards = [
     {
       icon: <FolderOpen size={24} />,
       title: 'Projects',
-      count: stats.projectsCount,
+      count: projects.length,
       color: 'text-blue-600',
       bgColor: 'bg-blue-50',
       onClick: () => navigate('admin-projects'),
@@ -103,7 +68,7 @@ const AdminDashboard: React.FC = () => {
     {
       icon: <FileText size={24} />,
       title: 'Blog Posts',
-      count: stats.blogPostsCount,
+      count: blogPosts.length,
       color: 'text-green-600',
       bgColor: 'bg-green-50',
       onClick: () => navigate('admin-blog'),
@@ -111,7 +76,7 @@ const AdminDashboard: React.FC = () => {
     {
       icon: <Code size={24} />,
       title: 'Skills',
-      count: stats.skillsCount,
+      count: skills.length,
       color: 'text-orange-600',
       bgColor: 'bg-orange-50',
       onClick: () => navigate('admin-skills'),
@@ -119,7 +84,7 @@ const AdminDashboard: React.FC = () => {
     {
       icon: <User size={24} />,
       title: 'Profile',
-      count: stats.hasProfile ? 1 : 0,
+      count: profile ? 1 : 0,
       color: 'text-purple-600',
       bgColor: 'bg-purple-50',
       onClick: () => navigate('admin-profile'),
@@ -168,6 +133,15 @@ const AdminDashboard: React.FC = () => {
     };
     return colors[action] || 'text-ink';
   };
+
+  if (loading) {
+    return (
+      <div className="space-y-6">
+        <Breadcrumb currentPage="admin" />
+        <DashboardSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

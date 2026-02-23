@@ -3,6 +3,7 @@ import { BrowserRouter } from 'react-router-dom';
 import AppRouter from './AppRouter';
 import { ErrorBoundary } from './components/common';
 import { seedService } from './services';
+import { SiteConfigProvider } from './context/SiteConfigContext';
 
 const App: React.FC = () => {
   // Initialize database on first load
@@ -13,10 +14,13 @@ const App: React.FC = () => {
   return (
     <BrowserRouter>
       <ErrorBoundary>
-        <AppRouter />
+        <SiteConfigProvider>
+          <AppRouter />
+        </SiteConfigProvider>
       </ErrorBoundary>
     </BrowserRouter>
   );
 };
 
 export default App;
+

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { BlogPost } from '../../models';
 import { blogPostService, activityService, authService } from '../../services';
+import { useAdminData } from '../../context/AdminDataContext';
 import {
   Card,
   Table,
@@ -30,7 +31,7 @@ interface ToastActions {
 const AdminBlog: React.FC = () => {
   const navigate = useAppNavigate();
   const toast = useOutletContext<ToastActions>();
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
+  const { blogPosts, refreshBlogPosts } = useAdminData();
   const [filteredPosts, setFilteredPosts] = useState<BlogPost[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -50,24 +51,7 @@ const AdminBlog: React.FC = () => {
   });
   const [contentText, setContentText] = useState('');
 
-  useEffect(() => {
-    loadBlogPosts();
-  }, []);
-
-  // Listen for storage changes (soft refresh - no loading spinner)
-  useEffect(() => {
-    const handleStorageChange = () => {
-      blogPostService.getAll().then((posts) => {
-        setBlogPosts(posts);
-      });
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-    };
-  }, []);
+  // Data comes from AdminDataContext — no need for local loading
 
   useEffect(() => {
     if (searchQuery) {
@@ -84,11 +68,6 @@ const AdminBlog: React.FC = () => {
       setFilteredPosts(blogPosts);
     }
   }, [searchQuery, blogPosts]);
-
-  const loadBlogPosts = async () => {
-    const posts = await blogPostService.getAll();
-    setBlogPosts(posts);
-  };
 
   const handleOpenModal = (post?: BlogPost) => {
     if (post) {
@@ -153,9 +132,7 @@ const AdminBlog: React.FC = () => {
       }
 
       handleCloseModal();
-      // Directly refresh the list
-      const updatedPosts = await blogPostService.getAll();
-      setBlogPosts(updatedPosts);
+      await refreshBlogPosts();
     } catch (error) {
       logger.error('Error saving blog post', { error });
       toast.error('Failed to save blog post. Please try again.');
@@ -185,9 +162,7 @@ const AdminBlog: React.FC = () => {
 
       setDeleteConfirm(null);
       toast.success('Blog post deleted successfully!');
-      // Directly refresh the list
-      const updatedPosts = await blogPostService.getAll();
-      setBlogPosts(updatedPosts);
+      await refreshBlogPosts();
     } catch (error) {
       logger.error('Error deleting blog post', { error });
       toast.error('Failed to delete blog post.');
@@ -205,9 +180,7 @@ const AdminBlog: React.FC = () => {
         userEmail: authService.getUserEmail(),
       });
       toast.success(post.published ? 'Blog post unpublished!' : 'Blog post published!');
-      // Directly refresh the list
-      const updatedPosts = await blogPostService.getAll();
-      setBlogPosts(updatedPosts);
+      await refreshBlogPosts();
     } catch (error) {
       logger.error('Error updating blog post', { error });
       toast.error('Failed to update blog post status.');
@@ -264,9 +237,8 @@ const AdminBlog: React.FC = () => {
       header: 'Status',
       render: (post: BlogPost) => (
         <span
-          className={`px-2 py-1 font-mono text-xs uppercase ${
-            post.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
-          }`}
+          className={`px-2 py-1 font-mono text-xs uppercase ${post.published ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'
+            }`}
         >
           {post.published ? 'Published' : 'Draft'}
         </span>
