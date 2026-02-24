@@ -6,6 +6,7 @@
 
 import { generateId } from '../utils/helpers';
 import { logger } from '../utils/logger';
+import { safeStorage } from '../utils/storage';
 
 export interface ActivityLog {
   id: string;
@@ -71,7 +72,7 @@ class ActivityService {
    */
   getAllLogs(): ActivityLog[] {
     try {
-      const data = localStorage.getItem(STORAGE_KEY);
+      const data = safeStorage.getItem(STORAGE_KEY);
       if (!data) return [];
 
       return JSON.parse(data);
@@ -126,7 +127,7 @@ class ActivityService {
    * Clear all logs
    */
   clearLogs(): void {
-    localStorage.removeItem(STORAGE_KEY);
+    safeStorage.removeItem(STORAGE_KEY);
   }
 
   /**
@@ -196,7 +197,7 @@ class ActivityService {
 
   private saveLogs(logs: ActivityLog[]): void {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
+      safeStorage.setItem(STORAGE_KEY, JSON.stringify(logs));
     } catch (error) {
       logger.error('Error saving activity logs', { error });
     }

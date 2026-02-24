@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { safeStorage } from '../utils/storage';
 
 const THEME_STORAGE_KEY = 'dailydev_theme';
 
@@ -9,7 +10,7 @@ const THEME_STORAGE_KEY = 'dailydev_theme';
  */
 export const useTheme = () => {
   const [isDarkMode, setIsDarkMode] = useState(() => {
-    const saved = localStorage.getItem(THEME_STORAGE_KEY);
+    const saved = safeStorage.getItem(THEME_STORAGE_KEY);
     if (saved !== null) return saved === 'dark';
     return window.matchMedia('(prefers-color-scheme: dark)').matches;
   });
@@ -21,7 +22,7 @@ export const useTheme = () => {
     } else {
       root.classList.remove('dark-mode');
     }
-    localStorage.setItem(THEME_STORAGE_KEY, isDarkMode ? 'dark' : 'light');
+    safeStorage.setItem(THEME_STORAGE_KEY, isDarkMode ? 'dark' : 'light');
   }, [isDarkMode]);
 
   const toggleTheme = () => setIsDarkMode((prev) => !prev);

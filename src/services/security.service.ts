@@ -2,6 +2,7 @@
  * Security Service
  * Handle rate limiting, session timeout, and account lockout
  */
+import { safeStorage } from '../utils/storage';
 
 const RATE_LIMIT_KEY = 'login_rate_limit';
 const LOCKOUT_KEY = 'account_lockout';
@@ -27,7 +28,7 @@ class SecurityService {
    * Check if account is locked out
    */
   isLockedOut(): { locked: boolean; remainingTime?: number } {
-    const lockoutDataStr = localStorage.getItem(LOCKOUT_KEY);
+    const lockoutDataStr = safeStorage.getItem(LOCKOUT_KEY);
     if (!lockoutDataStr) {
       return { locked: false };
     }
@@ -54,7 +55,7 @@ class SecurityService {
    * Returns true if account should be locked
    */
   recordFailedLogin(): { shouldLockout: boolean; attemptsRemaining: number } {
-    const rateLimitDataStr = localStorage.getItem(RATE_LIMIT_KEY);
+    const rateLimitDataStr = safeStorage.getItem(RATE_LIMIT_KEY);
     const now = Date.now();
 
     let rateLimitData: RateLimitData;
@@ -79,7 +80,7 @@ class SecurityService {
       };
     }
 
-    localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(rateLimitData));
+    safeStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(rateLimitData));
 
     const attemptsRemaining = MAX_LOGIN_ATTEMPTS - rateLimitData.attempts;
 
@@ -95,15 +96,15 @@ class SecurityService {
    * Clear failed login attempts (on successful login)
    */
   clearFailedLoginAttempts(): void {
-    localStorage.removeItem(RATE_LIMIT_KEY);
-    localStorage.removeItem(LOCKOUT_KEY);
+    safeStorage.removeItem(RATE_LIMIT_KEY);
+    safeStorage.removeItem(LOCKOUT_KEY);
   }
 
   /**
    * Record activity (for session timeout tracking)
    */
   recordActivity(): void {
-    localStorage.setItem(LAST_ACTIVITY_KEY, Date.now().toString());
+    safeStorage.setItem(LAST_ACTIVITY_KEY, Date.now().toString());
   }
 
   /**
@@ -111,7 +112,7 @@ class SecurityService {
    * Returns remaining time in seconds, or 0 if timed out
    */
   checkSessionTimeout(): { timedOut: boolean; remainingSeconds: number } {
-    const lastActivityStr = localStorage.getItem(LAST_ACTIVITY_KEY);
+    const lastActivityStr = safeStorage.getItem(LAST_ACTIVITY_KEY);
     if (!lastActivityStr) {
       return { timedOut: false, remainingSeconds: SESSION_TIMEOUT / 1000 };
     }
@@ -132,7 +133,7 @@ class SecurityService {
    * Clear session activity (on logout)
    */
   clearSessionActivity(): void {
-    localStorage.removeItem(LAST_ACTIVITY_KEY);
+    safeStorage.removeItem(LAST_ACTIVITY_KEY);
   }
 
   /**
@@ -159,12 +160,12 @@ class SecurityService {
       attempts: MAX_LOGIN_ATTEMPTS,
     };
 
-    localStorage.setItem(LOCKOUT_KEY, JSON.stringify(lockoutData));
+    safeStorage.setItem(LOCKOUT_KEY, JSON.stringify(lockoutData));
   }
 
   private clearLockout(): void {
-    localStorage.removeItem(LOCKOUT_KEY);
-    localStorage.removeItem(RATE_LIMIT_KEY);
+    safeStorage.removeItem(LOCKOUT_KEY);
+    safeStorage.removeItem(RATE_LIMIT_KEY);
   }
 }
 

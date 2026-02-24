@@ -17,6 +17,7 @@ import {
 import { projectService } from '../services';
 import { Project } from '../models';
 import { useAppNavigate } from '../hooks/useAppNavigate';
+import { ClassifiedsPageSkeleton } from '../components/PublicSkeletons';
 
 // Data Models
 type ProjectLayout =
@@ -70,8 +71,8 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
       {/* Modal Content - "The Case File" */}
       <div
         className={`relative w-full max-w-4xl max-h-[90vh] overflow-y-auto bg-newsprint border-4 border-double border-ink shadow-[10px_10px_0px_0px_rgba(0,0,0,0.5)] flex flex-col duration-300 ${isClosing
-            ? 'animate-out fade-out slide-out-to-bottom-4'
-            : 'animate-in fade-in slide-in-from-bottom-4'
+          ? 'animate-out fade-out slide-out-to-bottom-4'
+          : 'animate-in fade-in slide-in-from-bottom-4'
           }`}
       >
         {/* Paper Texture Overlay */}
@@ -160,8 +161,8 @@ const ProjectModal: React.FC<ProjectModalProps> = ({ project, onClose }) => {
                           type="button"
                           onClick={() => setActiveImageIndex(idx)}
                           className={`shrink-0 w-16 h-12 border-2 overflow-hidden transition-all ${idx === activeImageIndex
-                              ? 'border-ink shadow-[2px_2px_0_0_rgba(0,0,0,1)]'
-                              : 'border-ink/30 opacity-60 hover:opacity-100'
+                            ? 'border-ink shadow-[2px_2px_0_0_rgba(0,0,0,1)]'
+                            : 'border-ink/30 opacity-60 hover:opacity-100'
                             }`}
                         >
                           <img src={img} alt={`Thumb ${idx + 1}`} className="w-full h-full object-cover grayscale" />
@@ -482,14 +483,10 @@ const ClassifiedsPage: React.FC = () => {
   };
 
   if (loading) {
-    return (
-      <div className="text-center py-12">
-        <p className="font-mono text-sm">Loading projects...</p>
-      </div>
-    );
+    return <ClassifiedsPageSkeleton />;
   }
 
-  if (projects.length === 0) {
+  if (!projects || projects.length === 0) {
     return (
       <div className="text-center py-12 border border-ink p-8">
         <FolderOpen size={48} className="mx-auto mb-4 text-ink/20" />

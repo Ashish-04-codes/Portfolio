@@ -4,6 +4,7 @@ import { profileService, skillService } from '../services';
 import { Profile, Skill } from '../models';
 import { useAppNavigate } from '../hooks/useAppNavigate';
 import { logger } from '../utils/logger';
+import { AboutPageSkeleton } from '../components/PublicSkeletons';
 
 const AboutPage: React.FC = () => {
   const navigate = useAppNavigate();
@@ -56,14 +57,10 @@ const AboutPage: React.FC = () => {
     setLoading(false);
   };
 
+
+
   if (loading) {
-    return (
-      <article className="bg-surface p-4 md:p-8 shadow-sm border border-ink/10 transition-colors">
-        <div className="text-center py-12">
-          <p className="font-mono text-sm">Loading profile...</p>
-        </div>
-      </article>
-    );
+    return <AboutPageSkeleton />;
   }
 
   if (!profile) {

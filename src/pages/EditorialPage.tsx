@@ -3,6 +3,7 @@ import { Mail, Coffee, ImageOff, MessageSquare } from 'lucide-react';
 import { blogPostService, profileService } from '../services';
 import { BlogPost, Profile } from '../models';
 import { useAppNavigate } from '../hooks/useAppNavigate';
+import { EditorialPageSkeleton } from '../components/PublicSkeletons';
 
 const EditorialPage: React.FC = () => {
   const navigate = useAppNavigate();
@@ -48,6 +49,10 @@ const EditorialPage: React.FC = () => {
     setProfile(profileData);
     setLoading(false);
   };
+
+  if (loading) {
+    return <EditorialPageSkeleton />;
+  }
 
   const renderContent = (post: BlogPost) => {
     return post.content.map((block, index) => {
@@ -118,14 +123,6 @@ const EditorialPage: React.FC = () => {
       }
     });
   };
-
-  if (loading) {
-    return (
-      <div className="text-center py-12">
-        <p className="font-mono text-sm">Loading editorial content...</p>
-      </div>
-    );
-  }
 
   if (!featuredPost) {
     return (

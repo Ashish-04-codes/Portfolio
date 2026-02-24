@@ -4,9 +4,9 @@
  * Configuration loaded from environment variables
  */
 
-import { initializeApp } from 'firebase/app';
+import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { initializeFirestore, persistentLocalCache, persistentSingleTabManager } from 'firebase/firestore';
+import { initializeFirestore, getFirestore, persistentLocalCache, persistentSingleTabManager } from 'firebase/firestore';
 
 // Validate required environment variables
 const requiredEnvVars = [
@@ -21,7 +21,7 @@ const requiredEnvVars = [
 for (const varName of requiredEnvVars) {
   if (!import.meta.env[varName]) {
     throw new Error(
-      `Missing required environment variable: ${varName}. ` + 'Please check your .env file.'
+      `Missing required environment variable: ${varName}. Please check your .env file.`
     );
   }
 }
@@ -36,17 +36,27 @@ const firebaseConfig = {
   measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 };
 
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+// Initialize Firebase (safely for HMR)
+const apps = getApps();
+const app = !apps.length ? initializeApp(firebaseConfig) : getApp();
 
 // Initialize Firebase Authentication
 export const auth = getAuth(app);
 
 // Initialize Firestore with offline persistence
-export const db = initializeFirestore(app, {
-  localCache: persistentLocalCache({
-    tabManager: persistentSingleTabManager(undefined),
-  }),
-});
+// Handle HMR gracefully by checking if Firestore is already initialized on the app
+let firestoreDb;
+try {
+  // Try to get the existing instance first
+  firestoreDb = getFirestore(app);
+} catch (e) {
+  // If not initialized, initialize it with cache settings
+  firestoreDb = initializeFirestore(app, {
+    localCache: persistentLocalCache({
+      tabManager: persistentSingleTabManager(undefined),
+    }),
+  });
+}
 
+export const db = firestoreDb;
 export default app;
