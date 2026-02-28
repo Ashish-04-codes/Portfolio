@@ -47,15 +47,16 @@ export const auth = getAuth(app);
 // Handle HMR gracefully by checking if Firestore is already initialized on the app
 let firestoreDb;
 try {
-  // Try to get the existing instance first
-  firestoreDb = getFirestore(app);
-} catch (e) {
-  // If not initialized, initialize it with cache settings
+  // Try to initialize it with cache settings and force long polling to bypass network/CSP blocks
   firestoreDb = initializeFirestore(app, {
     localCache: persistentLocalCache({
       tabManager: persistentSingleTabManager(undefined),
     }),
+    experimentalForceLongPolling: true,
   });
+} catch (e) {
+  // If already initialized (e.g., during Vite HMR), get the existing instance
+  firestoreDb = getFirestore(app);
 }
 
 export const db = firestoreDb;
