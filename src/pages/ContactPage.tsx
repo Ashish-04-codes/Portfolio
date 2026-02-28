@@ -66,7 +66,7 @@ const ContactPage: React.FC = () => {
             formDataToSubmit.append('message', `Topic: ${formData.topic}\n\nMessage:\n${formData.message}`);
 
             // Optional: Honeypot for spam detection 
-            const honeypot = (document.getElementById('botcheck') as HTMLInputElement)?.value;
+            const honeypot = (document.getElementById('botcheck') as HTMLInputElement)?.checked;
             if (honeypot) {
                 setIsSubmitting(false);
                 return; // Silently reject spam
@@ -231,23 +231,23 @@ const ContactPage: React.FC = () => {
                             <span className="block text-xs font-bold uppercase tracking-widest mb-1 font-mono">03. Nature of Inquiry</span>
                             <div className="flex flex-wrap gap-6 font-mono text-sm">
                                 <label className="flex items-center space-x-2 cursor-pointer group select-none">
-                                    <input type="radio" name="topic" value="Project Proposal" checked={formData.topic === 'Project Proposal'} onChange={(e) => setFormData(prev => ({ ...prev, topic: e.target.value }))} className="hidden peer" />
+                                    <input type="radio" name="topic" value="Project Proposal" checked={formData.topic === 'Project Proposal'} onChange={(e) => setFormData(prev => ({ ...prev, topic: e.target.value }))} className="hidden" />
                                     <div className="w-4 h-4 border border-ink rounded-full flex items-center justify-center group-hover:bg-ink/10 transition-colors">
-                                        <div className="w-2 h-2 bg-ink rounded-full opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                                        <div className={`w-2 h-2 bg-ink rounded-full transition-opacity ${formData.topic === 'Project Proposal' ? 'opacity-100' : 'opacity-0'}`}></div>
                                     </div>
                                     <span>Project Proposal</span>
                                 </label>
                                 <label className="flex items-center space-x-2 cursor-pointer group select-none">
-                                    <input type="radio" name="topic" value="Employment Offer" checked={formData.topic === 'Employment Offer'} onChange={(e) => setFormData(prev => ({ ...prev, topic: e.target.value }))} className="hidden peer" />
+                                    <input type="radio" name="topic" value="Employment Offer" checked={formData.topic === 'Employment Offer'} onChange={(e) => setFormData(prev => ({ ...prev, topic: e.target.value }))} className="hidden" />
                                     <div className="w-4 h-4 border border-ink rounded-full flex items-center justify-center group-hover:bg-ink/10 transition-colors">
-                                        <div className="w-2 h-2 bg-ink rounded-full opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                                        <div className={`w-2 h-2 bg-ink rounded-full transition-opacity ${formData.topic === 'Employment Offer' ? 'opacity-100' : 'opacity-0'}`}></div>
                                     </div>
                                     <span>Employment Offer</span>
                                 </label>
                                 <label className="flex items-center space-x-2 cursor-pointer group select-none">
-                                    <input type="radio" name="topic" value="Fan Mail" checked={formData.topic === 'Fan Mail'} onChange={(e) => setFormData(prev => ({ ...prev, topic: e.target.value }))} className="hidden peer" />
+                                    <input type="radio" name="topic" value="Fan Mail" checked={formData.topic === 'Fan Mail'} onChange={(e) => setFormData(prev => ({ ...prev, topic: e.target.value }))} className="hidden" />
                                     <div className="w-4 h-4 border border-ink rounded-full flex items-center justify-center group-hover:bg-ink/10 transition-colors">
-                                        <div className="w-2 h-2 bg-ink rounded-full opacity-0 peer-checked:opacity-100 transition-opacity"></div>
+                                        <div className={`w-2 h-2 bg-ink rounded-full transition-opacity ${formData.topic === 'Fan Mail' ? 'opacity-100' : 'opacity-0'}`}></div>
                                     </div>
                                     <span>Fan Mail</span>
                                 </label>
