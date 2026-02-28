@@ -8,6 +8,14 @@ const ContactPage: React.FC = () => {
     const [isStamped, setIsStamped] = useState(false);
     const [profile, setProfile] = useState<Profile | null>(null);
     const [loading, setLoading] = useState(true);
+    const [formData, setFormData] = useState({
+        name: '',
+        email: '',
+        topic: 'Project Proposal',
+        message: ''
+    });
+    const [isSubmitting, setIsSubmitting] = useState(false);
+    const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
 
     useEffect(() => {
         loadProfile();
@@ -38,12 +46,58 @@ const ContactPage: React.FC = () => {
     };
 
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        // In a real app, this would send the form data
-        // For now, just show the stamp animation
-        setIsStamped(true);
-        setTimeout(() => setIsStamped(false), 3000);
+
+        if (!isStamped) {
+            alert("Please calculate postage by placing a stamp first!");
+            return;
+        }
+
+        setIsSubmitting(true);
+        setSubmitStatus('idle');
+
+        try {
+            const formDataToSubmit = new FormData();
+            formDataToSubmit.append('access_key', 'be52c94e-c936-481a-91fb-bf902c8e2d1b');
+            formDataToSubmit.append('name', formData.name);
+            formDataToSubmit.append('email', formData.email);
+            formDataToSubmit.append('subject', `New Contact: ${formData.topic}`);
+            formDataToSubmit.append('message', `Topic: ${formData.topic}\n\nMessage:\n${formData.message}`);
+
+            // Optional: Honeypot for spam detection 
+            const honeypot = (document.getElementById('botcheck') as HTMLInputElement)?.value;
+            if (honeypot) {
+                setIsSubmitting(false);
+                return; // Silently reject spam
+            }
+
+            const response = await fetch('https://api.web3forms.com/submit', {
+                method: 'POST',
+                body: formDataToSubmit
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                setSubmitStatus('success');
+                setFormData({
+                    name: '',
+                    email: '',
+                    topic: 'Project Proposal',
+                    message: ''
+                });
+                setIsStamped(false); // Reset stamp
+            } else {
+                console.error("Form submission failed:", data.message);
+                setSubmitStatus('error');
+            }
+        } catch (error) {
+            console.error("Error submitting form:", error);
+            setSubmitStatus('error');
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     if (loading) {
@@ -118,22 +172,29 @@ const ContactPage: React.FC = () => {
                                         <Twitter size={14} /> Twitter
                                     </a>
                                 )}
-                                {profile.website && (
-                                    <a
-                                        href={profile.website}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        className="flex items-center gap-2 px-3 py-1 border border-ink hover:bg-ink hover:text-newsprint transition-colors font-mono text-xs"
-                                    >
-                                        <Globe size={14} /> Website
-                                    </a>
-                                )}
                             </div>
                         )}
                     </div>
 
                     {/* Form */}
                     <form className="space-y-8 mt-8" onSubmit={handleSubmit}>
+                        {/* Status Messages */}
+                        {submitStatus === 'success' && (
+                            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 font-mono text-sm mb-6 flex justify-between items-center">
+                                <span>Telegraph dispatched successfully! Expect a reply soon.</span>
+                                <button type="button" onClick={() => setSubmitStatus('idle')} className="text-xl leading-none">&times;</button>
+                            </div>
+                        )}
+                        {submitStatus === 'error' && (
+                            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 font-mono text-sm mb-6 flex justify-between items-center">
+                                <span>Telegraph transmission failed. Please check the wires and try again.</span>
+                                <button type="button" onClick={() => setSubmitStatus('idle')} className="text-xl leading-none">&times;</button>
+                            </div>
+                        )}
+
+                        {/* Honeypot field - hidden from users */}
+                        <input type="checkbox" name="botcheck" id="botcheck" style={{ display: 'none' }} />
+
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12">
 
                             {/* Name */}
@@ -142,8 +203,11 @@ const ContactPage: React.FC = () => {
                                 <input
                                     type="text"
                                     id="name"
+                                    value={formData.name}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
                                     placeholder="e.g. John Doe"
                                     className="w-full bg-transparent border-b border-ink p-2 font-mono text-lg placeholder-ink-light/30 focus:outline-none focus:border-b-2 transition-all"
+                                    required
                                 />
                             </div>
 
@@ -153,8 +217,11 @@ const ContactPage: React.FC = () => {
                                 <input
                                     type="email"
                                     id="email"
+                                    value={formData.email}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, email: e.target.value }))}
                                     placeholder="name@company.com"
                                     className="w-full bg-transparent border-b border-ink p-2 font-mono text-lg placeholder-ink-light/30 focus:outline-none focus:border-b-2 transition-all"
+                                    required
                                 />
                             </div>
                         </div>
@@ -164,21 +231,21 @@ const ContactPage: React.FC = () => {
                             <span className="block text-xs font-bold uppercase tracking-widest mb-1 font-mono">03. Nature of Inquiry</span>
                             <div className="flex flex-wrap gap-6 font-mono text-sm">
                                 <label className="flex items-center space-x-2 cursor-pointer group select-none">
-                                    <input type="radio" name="topic" className="hidden peer" defaultChecked />
+                                    <input type="radio" name="topic" value="Project Proposal" checked={formData.topic === 'Project Proposal'} onChange={(e) => setFormData(prev => ({ ...prev, topic: e.target.value }))} className="hidden peer" />
                                     <div className="w-4 h-4 border border-ink rounded-full flex items-center justify-center group-hover:bg-ink/10 transition-colors">
                                         <div className="w-2 h-2 bg-ink rounded-full opacity-0 peer-checked:opacity-100 transition-opacity"></div>
                                     </div>
                                     <span>Project Proposal</span>
                                 </label>
                                 <label className="flex items-center space-x-2 cursor-pointer group select-none">
-                                    <input type="radio" name="topic" className="hidden peer" />
+                                    <input type="radio" name="topic" value="Employment Offer" checked={formData.topic === 'Employment Offer'} onChange={(e) => setFormData(prev => ({ ...prev, topic: e.target.value }))} className="hidden peer" />
                                     <div className="w-4 h-4 border border-ink rounded-full flex items-center justify-center group-hover:bg-ink/10 transition-colors">
                                         <div className="w-2 h-2 bg-ink rounded-full opacity-0 peer-checked:opacity-100 transition-opacity"></div>
                                     </div>
                                     <span>Employment Offer</span>
                                 </label>
                                 <label className="flex items-center space-x-2 cursor-pointer group select-none">
-                                    <input type="radio" name="topic" className="hidden peer" />
+                                    <input type="radio" name="topic" value="Fan Mail" checked={formData.topic === 'Fan Mail'} onChange={(e) => setFormData(prev => ({ ...prev, topic: e.target.value }))} className="hidden peer" />
                                     <div className="w-4 h-4 border border-ink rounded-full flex items-center justify-center group-hover:bg-ink/10 transition-colors">
                                         <div className="w-2 h-2 bg-ink rounded-full opacity-0 peer-checked:opacity-100 transition-opacity"></div>
                                     </div>
@@ -194,7 +261,10 @@ const ContactPage: React.FC = () => {
                                 <textarea
                                     id="message"
                                     rows={5}
+                                    value={formData.message}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, message: e.target.value }))}
                                     placeholder="Start typing here..."
+                                    required
                                     className="w-full bg-transparent border border-ink p-4 font-mono text-lg leading-8 resize-none focus:outline-none focus:ring-1 focus:ring-ink focus:border-ink transition-all placeholder-ink-light/30"
                                     style={{
                                         backgroundImage: 'repeating-linear-gradient(transparent, transparent 31px, rgb(var(--rgb-ink) / 0.1) 31px, rgb(var(--rgb-ink) / 0.1) 32px)',
@@ -236,12 +306,16 @@ const ContactPage: React.FC = () => {
                             </div>
 
                             <button
-                                type="button"
+                                type="submit"
                                 className="order-1 md:order-2 w-full md:w-auto bg-ink text-newsprint hover:bg-surface hover:text-ink border-2 border-ink transition-all duration-300 py-4 px-10 font-mono font-bold uppercase tracking-widest text-sm shadow-[4px_4px_0px_0px_rgba(0,0,0,0.2)] hover:shadow-none translate-y-0 hover:translate-y-1 flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-                                disabled={!isStamped}
+                                disabled={!isStamped || isSubmitting}
                                 title={!isStamped ? "Please place a stamp first" : "Send message"}
                             >
-                                Post Letter <Send size={16} className={isStamped ? 'animate-pulse' : ''} />
+                                {isSubmitting ? (
+                                    <>Transmitting...</>
+                                ) : (
+                                    <>Post Letter <Send size={16} className={isStamped ? 'animate-pulse' : ''} /></>
+                                )}
                             </button>
                         </div>
 
