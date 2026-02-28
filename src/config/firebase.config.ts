@@ -6,7 +6,7 @@
 
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { initializeFirestore, getFirestore, persistentLocalCache, persistentSingleTabManager } from 'firebase/firestore';
+import { initializeFirestore, getFirestore } from 'firebase/firestore';
 
 // Validate required environment variables
 const requiredEnvVars = [
@@ -43,15 +43,11 @@ const app = !apps.length ? initializeApp(firebaseConfig) : getApp();
 // Initialize Firebase Authentication
 export const auth = getAuth(app);
 
-// Initialize Firestore with offline persistence
-// Handle HMR gracefully by checking if Firestore is already initialized on the app
+// Initialize Firestore directly without IndexedDB caching
+// This prevents "client is offline" lockups in strict production environments
 let firestoreDb;
 try {
-  // Try to initialize it with cache settings and force long polling to bypass network/CSP blocks
   firestoreDb = initializeFirestore(app, {
-    localCache: persistentLocalCache({
-      tabManager: persistentSingleTabManager(undefined),
-    }),
     experimentalForceLongPolling: true,
   });
 } catch (e) {
