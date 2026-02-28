@@ -13,7 +13,7 @@ import {
   query,
   orderBy,
   QueryConstraint,
-} from 'firebase/firestore';
+} from 'firebase/firestore/lite';
 import { db } from '../config/firebase.config';
 import { logger } from '../utils/logger';
 

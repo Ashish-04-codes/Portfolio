@@ -6,7 +6,7 @@
 
 import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
-import { initializeFirestore, getFirestore } from 'firebase/firestore';
+import { getFirestore } from 'firebase/firestore/lite';
 
 // Validate required environment variables
 const requiredEnvVars = [
@@ -43,17 +43,7 @@ const app = !apps.length ? initializeApp(firebaseConfig) : getApp();
 // Initialize Firebase Authentication
 export const auth = getAuth(app);
 
-// Initialize Firestore directly without IndexedDB caching
-// This prevents "client is offline" lockups in strict production environments
-let firestoreDb;
-try {
-  firestoreDb = initializeFirestore(app, {
-    experimentalForceLongPolling: true,
-  });
-} catch (e) {
-  // If already initialized (e.g., during Vite HMR), get the existing instance
-  firestoreDb = getFirestore(app);
-}
-
-export const db = firestoreDb;
+// Initialize Firestore Lite (REST API without WebChannel caching)
+// This strictly uses HTTP fetch requests which cannot be blocked by production networks
+export const db = getFirestore(app);
 export default app;

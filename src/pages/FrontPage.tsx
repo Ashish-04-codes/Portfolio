@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Page } from '../types';
 import { ArrowRight, Cloud, Sun, Terminal, Database, TrendingUp, TrendingDown } from 'lucide-react';
 import { profileService, skillService } from '../services';
@@ -6,11 +7,10 @@ import { Profile, Skill } from '../models';
 import { FrontPageSkeleton } from '../components/PublicSkeletons';
 import { useSiteConfig } from '../context/SiteConfigContext';
 
-interface FrontPageProps {
-    navigate: (page: Page) => void;
-}
+interface FrontPageProps { }
 
-const FrontPage: React.FC<FrontPageProps> = ({ navigate }) => {
+const FrontPage: React.FC<FrontPageProps> = () => {
+    const navigate = useNavigate();
     const { heroTitle, heroSubtitle, heroImage, availableForWork, availabilityMessage } = useSiteConfig();
     const [profile, setProfile] = useState<Profile | null>(null);
     const [skills, setSkills] = useState<Skill[]>([]);
